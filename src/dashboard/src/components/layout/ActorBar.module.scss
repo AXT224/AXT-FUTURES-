@@ -1,0 +1,457 @@
+// LeaderBar styles — F4 batch 2 migration from inline object styles.
+// Per-leader color + background + border come in via CSS custom
+// properties set on the root: `--actor-color`, `--actor-bg`,
+// `--actor-border`.
+
+@use '../../theme/typography' as typo;
+
+.root {
+  flex: 1;
+  padding: 4px 12px;
+  background: var(--bg-panel);
+  min-width: 0;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.archetypeChip {
+  font-size: var(--font-3xs);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 800;
+  font-family: var(--mono);
+  color: var(--actor-color);
+  background: var(--actor-bg);
+  border: 1px solid var(--actor-border);
+  flex-shrink: 0;
+  letter-spacing: 0.5px;
+}
+
+/* Slot-letter badge for the non-compact ActorBar. Slightly larger than
+   the compact variant since the non-compact card has more vertical
+   room. Same color palette as .archetypeChip so the chrome stays
+   visually consistent across the two presentations. */
+.slot {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--actor-color);
+  background: var(--actor-bg);
+  border: 1px solid var(--actor-border);
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.verdictChip {
+  font-size: var(--font-3xs);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 800;
+  font-family: var(--mono);
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+
+  &.winner {
+    color: var(--green);
+    background: rgba(106, 173, 72, 0.14);
+    border: 1px solid rgba(106, 173, 72, 0.4);
+  }
+
+  &.tie {
+    color: var(--amber);
+    background: rgba(232, 180, 74, 0.12);
+    border: 1px solid var(--amber-dim);
+  }
+
+  &.second {
+    color: var(--text-3);
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+  }
+}
+
+.name {
+  font-size: var(--font-lg);
+  font-weight: 800;
+  color: var(--actor-color);
+  white-space: nowrap;
+}
+
+.unitTag {
+  font-size: var(--font-2xs);
+  color: var(--text-3);
+  white-space: nowrap;
+  margin-left: 6px;
+  padding-left: 6px;
+  border-left: 1px solid var(--border);
+}
+
+.traits {
+  display: contents;
+}
+
+.traitsSep {
+  color: var(--border);
+  margin: 0 2px;
+}
+
+.traitsLine {
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  color: var(--actor-color);
+  letter-spacing: 0;
+  opacity: 0.9;
+  min-width: 0;
+}
+
+.subRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 3px;
+}
+
+.quote {
+  font-style: italic;
+  font-size: var(--font-xs);
+  color: var(--text-2);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.awaiting {
+  color: var(--text-3);
+  font-style: normal;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  letter-spacing: 0.04em;
+}
+
+.sparklines {
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+// Tooltip inner chrome. The surrounding tooltip rows below
+// (.tooltipTraitBlock, .tooltipTraitLabel) are mono, so keep mono here
+// to avoid a sans-on-mono discontinuity. body-strong would have flipped.
+.tooltipHeading {
+  font-family: var(--mono);
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--actor-color);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.tooltipInstructions {
+  font-size: var(--font-xs);
+  color: var(--text-2);
+  margin-top: 6px;
+  font-style: italic;
+}
+
+.tooltipTraitBlock {
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  margin-top: 8px;
+  line-height: 1.8;
+}
+
+.tooltipTraitRow {
+  display: flex;
+  justify-content: space-between;
+}
+
+.tooltipTraitLabel {
+  color: var(--text-2);
+}
+
+.tooltipTraitValue {
+  color: var(--actor-color);
+}
+
+// Compact ActorBar — single-line sticky-header form for the SIM tab's
+// TurnGrid. `--actor-color` is the only inline custom property (the
+// per-side band color).
+
+.compact {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  row-gap: 4px;
+  column-gap: 6px;
+  padding: 8px 12px 8px 8px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+  min-width: 0;
+  position: relative;
+}
+
+.compactBand {
+  width: 3px;
+  align-self: stretch;
+  background: var(--actor-color, var(--amber));
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* Compact slot-letter badge: small monospace "A" / "B" / "C" pill that
+   sits between the color band and the name. Matches the constellation +
+   ActorTable slot ordering so visitors can cross-reference at a glance.
+   Color comes from the actor color custom property; background is a
+   tinted version of that so it reads as the actor's slot, not chrome. */
+.compactSlot {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: var(--actor-color, var(--amber));
+  background: var(--actor-bg, rgba(232, 180, 74, 0.12));
+  border: 1px solid var(--actor-border, var(--amber-dim));
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.compactName {
+  color: var(--actor-color, var(--amber));
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.compactSep {
+  color: var(--text-4);
+  flex-shrink: 0;
+}
+
+.compactStat {
+  color: var(--text-2);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.compactArchetype {
+  font-size: var(--font-3xs);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--actor-color, var(--amber));
+  background: var(--actor-bg, rgba(232, 180, 74, 0.12));
+  border: 1px solid var(--actor-border, var(--amber-dim));
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.compactMood,
+.compactCrisis,
+.compactDeciding {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-3xs);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.compactMood {
+  background: rgba(120, 120, 120, 0.1);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+}
+
+.compactCrisis {
+  // Bumped from rgba(213,95,95,0.12) bg + 0.4 border → 0.18/0.55. WCAG
+  // AA wants 3:1 contrast for graphical objects (the chip border) and
+  // ~4.5:1 for body text. The previous values landed under 3:1 against
+  // var(--bg-panel). 0.55 alpha on the border + slightly bolder text
+  // crosses both thresholds on the dashboard's dark surface.
+  background: rgba(213, 95, 95, 0.18);
+  border: 1px solid rgba(213, 95, 95, 0.55);
+  color: var(--red, #ff7676);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 700;
+}
+
+.compactDeciding {
+  // Same contrast bump rationale as .compactCrisis. Amber on amber-tint
+  // was washing out at the previous alpha; bolder weight + brighter
+  // text color resolves the drift without changing visual hierarchy.
+  background: rgba(232, 180, 74, 0.18);
+  border: 1px solid var(--amber);
+  color: var(--amber);
+  font-weight: 800;
+  animation: pulse-deciding 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse-deciding {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compactDeciding,
+  .chipDeciding {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+// Below 480px the TurnGrid sticky header stacks into one column per leader,
+// and the compact bar can wrap to 3+ rows once mood + crisis + DECIDING
+// land on it. That's too much sticky-header height on a phone. Drop the
+// non-essential chips (mood / crisis / archetype) below this width — name
+// + POP + MORALE + DECIDING is the bare minimum signal. The full
+// non-compact ActorBar at the top of SimView still surfaces everything.
+@media (max-width: 480px) {
+  .compactArchetype,
+  .compactMood,
+  .compactCrisis {
+    display: none;
+  }
+}
+
+// Focus-visible polish for the chips that are interactive surfaces.
+// Spans aren't focusable by default, so this only matters if a future
+// caller adds tabindex; keeping the rule in place locks the visual
+// contract so it stays consistent if/when that happens.
+.chip:focus-visible,
+.compactArchetype:focus-visible,
+.compactMood:focus-visible,
+.compactCrisis:focus-visible,
+.compactDeciding:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+.dynamicRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed var(--border);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chipLabel {
+  color: var(--text-3);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.chipValue {
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+.chipCrisis {
+  background: rgba(213, 95, 95, 0.08);
+  border-color: rgba(213, 95, 95, 0.3);
+}
+
+.chipCrisis .chipLabel {
+  color: rgba(213, 95, 95, 0.85);
+}
+
+.chipDeciding {
+  background: rgba(232, 180, 74, 0.08);
+  border-color: var(--amber-dim);
+  animation: pulse-deciding 1.4s ease-in-out infinite;
+}
+
+.chipDeciding .chipLabel {
+  color: var(--amber);
+}
+
+.chipStatus {
+  background: var(--bg-card);
+}
+
+.mood_low {
+  // Lifted text alpha to 1.0 + border to 0.55 + brighter base color
+  // so the "low mood" chip clears WCAG AA at the dashboard's dark
+  // surface. Distinctly red without leaning into pure-saturation.
+  color: #ff8585;
+  border-color: rgba(213, 95, 95, 0.55);
+  background: rgba(213, 95, 95, 0.12);
+}
+
+.mood_low .chipLabel {
+  color: #ff8585;
+}
+
+.mood_tense {
+  color: var(--amber);
+  border-color: var(--amber-dim);
+  background: rgba(232, 180, 74, 0.08);
+}
+
+.mood_tense .chipLabel {
+  color: var(--amber);
+}
+
+.mood_ok {
+  color: var(--text-1);
+}
+
+.mood_high {
+  color: var(--green, #6aad48);
+  border-color: rgba(106, 173, 72, 0.4);
+  background: rgba(106, 173, 72, 0.08);
+}
+
+.mood_high .chipLabel {
+  color: rgba(106, 173, 72, 0.85);
+}

@@ -1,0 +1,265 @@
+// Migrated from inline `style={{}}`. Side color, morale-derived border
+// + glow, and chronicle-hover override flow in via CSS custom properties.
+
+.region {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.region.narrow {
+  flex: 0 0 auto;
+  min-height: 420px;
+  // `flex: 0 0 auto` means "don't shrink" — combined with auto basis
+  // the region sizes to its widest descendant. On phone widths the
+  // canvas overlay buttons (drilldown popovers anchored to colonist
+  // tiles) push the region past the viewport so the always-on featured
+  // labels at x=221+224=445px bleed off-screen on a 390px viewport.
+  // Pin to the parent width so overflow:hidden actually clips.
+  max-width: 100%;
+}
+
+.canvasWrap {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  // Soft morale-tinted wash. Flat (not radial) — the prior `bg-deep`
+  // outer stop produced a vignette read on wide viewports where the
+  // canvas filled the panel. Keep the morale tint intact at uniform
+  // low opacity so the corners read as the same surface as the center.
+  background: color-mix(in srgb, var(--tint-color, var(--amber)) 5%, transparent);
+  // --wrap-border + --wrap-glow vary by morale / chronicle hover; pre-baked
+  // by the parent so the hot loop on this canvas never reflows.
+  border: 2px solid var(--wrap-border, color-mix(in srgb, var(--amber) 33%, transparent));
+  border-radius: 4px;
+  box-shadow: var(--wrap-glow, none);
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  // --canvas-cursor set inline (pointer when hovering a glyph, default else).
+  cursor: var(--canvas-cursor, default);
+}
+
+.revealCover {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  // Flat fade: the previous radial-gradient (transparent center →
+  // opaque corners) painted a visible vignette on every panel mount.
+  // On the Divergence sub-tab of VIZ, every grid remounts on tab
+  // switch so the corner darkening was almost always visible. The
+  // intent of this cover is "smooth fade-in from blank panel to live
+  // canvas", which a flat fill delivers without the corner-darken
+  // artifact the user reported.
+  background: var(--bg-deep);
+  // --reveal-opacity set inline (1 → 0 at first paint).
+  opacity: var(--reveal-opacity, 1);
+  transition: opacity 400ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  z-index: 2;
+}
+
+.cornerBtn {
+  position: absolute;
+  top: 8px;
+  // --right-offset set inline.
+  right: var(--right-offset, 8px);
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--bg-panel);
+  // --btn-color and --btn-border set inline (active vs idle).
+  color: var(--btn-color, var(--text-3));
+  border: 1px solid var(--btn-border, var(--border));
+  border-radius: 3px;
+  cursor: pointer;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  font-weight: 800;
+  line-height: 1;
+  z-index: 6;
+}
+
+.focusBtn {
+  font-size: var(--font-sm);
+  font-weight: 400;
+}
+
+.divergenceEmpty {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 4;
+}
+
+.divergenceEmptyMsg {
+  padding: 6px 12px;
+  background: rgba(10, 8, 6, 0.85);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.tileTooltip {
+  position: absolute;
+  // --tt-left, --tt-top set inline (clamped to canvas).
+  left: var(--tt-left, 0);
+  top: var(--tt-top, 0);
+  padding: 8px 12px;
+  background: var(--bg-panel);
+  // --kind-color set inline; border colors derive via color-mix.
+  border: 1px solid color-mix(in srgb, var(--kind-color, var(--amber)) 40%, transparent);
+  border-left: 3px solid var(--kind-color, var(--amber));
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-2);
+  pointer-events: none;
+  z-index: 5;
+  max-width: 220px;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.tileKindLabel {
+  color: var(--kind-color, var(--amber));
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: var(--font-3xs);
+  margin-bottom: 3px;
+}
+
+.tileCoords {
+  font-size: var(--font-3xs);
+  color: var(--text-3);
+  margin-bottom: 4px;
+}
+
+.tileNearestName {
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+.tileNearestRole {
+  font-size: var(--font-3xs);
+  color: var(--text-3);
+  margin-top: 2px;
+}
+
+.tileNearestDeath {
+  font-size: var(--font-3xs);
+  color: var(--rust);
+  margin-top: 3px;
+}
+
+.tileNearestBirth {
+  font-size: var(--font-3xs);
+  color: var(--green);
+  margin-top: 3px;
+}
+
+.tileNearestPattern {
+  font-size: var(--font-3xs);
+  color: var(--text-3);
+  margin-top: 3px;
+}
+
+.tileAmbient { color: var(--text-3); }
+
+.hoverTooltip {
+  position: absolute;
+  // --tt-left, --tt-top set inline.
+  left: var(--tt-left, 0);
+  top: var(--tt-top, 0);
+  padding: 6px 10px;
+  background: var(--bg-panel);
+  // --side-color set inline.
+  border: 1px solid color-mix(in srgb, var(--side-color, var(--amber)) 40%, transparent);
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-2);
+  pointer-events: none;
+  z-index: 5;
+  // Children declare their own text-overflow handling. The container
+  // clips the box so the white-space:nowrap children don't bleed past
+  // the 200px max-width on phone canvases (the bottom-right of the
+  // grid where ttW=200 from LivingSwarmGrid hover-clamp puts the
+  // tooltip flush against the right edge of the panel).
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  max-width: 200px;
+}
+
+.hoverHeader {
+  color: var(--side-color, var(--amber));
+  font-weight: 700;
+  font-size: var(--font-xs);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  min-width: 0;
+}
+
+.hoverFeaturedPill {
+  flex: 0 0 auto;
+  font-size: var(--font-3xs);
+  padding: 1px 4px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--side-color, var(--amber)) 20%, transparent);
+  color: var(--side-color, var(--amber));
+}
+
+.hoverRole {
+  color: var(--text-3);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hoverMood { margin-top: 2px; }
+
+.hoverMoodValue { color: var(--text-2); }
+
+.psychBlock { margin-top: 4px; }
+
+.psychLabel {
+  font-size: var(--font-3xs);
+  color: var(--text-4);
+  letter-spacing: 0.1em;
+}
+
+.psychSvg {
+  display: block;
+  background: var(--bg-deep);
+  border-radius: 2px;
+  margin-top: 2px;
+}
+
+.hoverHint {
+  margin-top: 3px;
+  font-size: var(--font-3xs);
+  color: var(--text-4);
+}

@@ -1,0 +1,909 @@
+@import "tailwindcss";
+
+/* Paracosm Design System
+   Bloomberg terminal meets glassmorphic cockpit.
+   Dense. Warm. Monospace-forward. Every pixel earns its space.
+   WCAG AA compliant in both dark and light modes. */
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* === SKIP NAVIGATION (a11y) === */
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 999999;
+    padding: 8px 16px;
+    background: var(--amber);
+    color: var(--bg-deep);
+    font-weight: 700;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    font-family: var(--sans);
+  }
+  .skip-to-content:focus {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* === SCREEN-READER ONLY (a11y) ===
+     Visible to AT, invisible to sighted users. The standard utility for
+     anchoring SR-only headings (per-tab h1) and labels that don't fit
+     the visible chrome. Tailwind v4 ships .sr-only via @import; the
+     explicit definition here guarantees it survives any future Tailwind
+     config change or purge. */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* === FOCUS-VISIBLE BASELINE (a11y) ===
+     Strip the browser default outline only when focus comes from a
+     mouse click (`:focus:not(:focus-visible)`); keep a high-contrast
+     amber ring for keyboard-driven focus so SR/keyboard users always
+     have a visible target. Per-component SCSS rules can still override
+     with custom outlines — the cascade lets them win.
+
+     Form controls keep their click-focus ring because the text caret
+     alone is insufficient signal in dense settings forms. */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+  input:focus,
+  textarea:focus,
+  select:focus {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+  }
+  /* No `border-radius` here — modern browsers honor the element's own
+     border-radius for outline shape (Chrome 94+, Firefox 88+), so the
+     ring follows rounded buttons / cards naturally. Forcing 2px would
+     mismatch every 6-8px-radius button in the dashboard. */
+  :focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+
+  html {
+    width: 100%; height: 100%;
+    overflow-x: hidden;
+    color-scheme: dark;
+  }
+
+  body {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    background: var(--bg-deep);
+    color: var(--text-1);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  :root {
+    color-scheme: dark;
+
+    /* === FONTS === */
+    --sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --mono: 'JetBrains Mono', 'SF Mono', Menlo, 'Cascadia Code', monospace;
+
+    /* === TYPE SCALE — nine canonical sizes ===
+       Use the token, not the px value, so the dashboard reads at one
+       coherent rhythm across tabs. The mapping that retired the prior
+       drift (8/9.5/10.5/11.5/15/17/22/32 etc.):
+         3xs  9px   badge text, super-tight chrome
+         2xs  10px  micro-labels, sparkline captions
+         xs   11px  uppercase labels, chip buttons
+         sm   12px  small body, secondary copy, dense tables
+         md   13px  body, inputs, default reading surface
+         lg   14px  larger body, primary buttons
+         xl   16px  section heads, callouts
+         2xl  20px  page heads
+         3xl  24px  display titles
+       Anything bigger than 3xl is a one-off; reach for inline
+       font-size: clamp(...) on the specific element. */
+    --font-3xs: 9px;
+    --font-2xs: 10px;
+    --font-xs: 11px;
+    --font-sm: 12px;
+    --font-md: 13px;
+    --font-lg: 14px;
+    --font-xl: 16px;
+    --font-2xl: 20px;
+    --font-3xl: 24px;
+
+    /* === BACKGROUNDS — warm deep blacks === */
+    --bg-deep: #0a0806;
+    --bg-panel: #14110e;
+    --bg-card: #1c1915;
+    --bg-input: #0e0c0a;
+    --bg-elevated: #242018;
+
+    /* Glassmorphic surfaces */
+    --glass-bg: rgba(20, 17, 14, 0.75);
+    --glass-border: rgba(48, 42, 34, 0.5);
+    --glass-blur: 12px;
+    --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --glass-glow: 0 0 30px rgba(232, 180, 74, 0.04);
+
+    /* Inset / 3D depth */
+    --inset-shadow: inset 0 1px 0 rgba(255, 240, 200, 0.03), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 1px rgba(232, 180, 74, 0.1);
+    --raised-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
+
+    /* === TEXT — warm off-whites === */
+    --text-1: #f5f0e4;
+    --text-2: #d8ccb0;
+    --text-3: #a89878;
+    --text-4: #6b5f50;
+
+    /* Legacy aliases for components that use these */
+    --text-primary: var(--text-1);
+    --text-secondary: var(--text-2);
+    --text-muted: var(--text-3);
+    --text-placeholder: var(--text-4);
+    --text-contrast: #0a0806;
+    --bg-primary: var(--bg-deep);
+    --bg-secondary: var(--bg-panel);
+    --bg-tertiary: var(--bg-card);
+
+    /* === ACCENTS === */
+    --rust: #e06530;
+    --rust-dim: #8b3d1e;
+    --rust-glow: rgba(224, 101, 48, 0.15);
+    --amber: #e8b44a;
+    --amber-dim: #8b6a2e;
+    --amber-glow: rgba(232, 180, 74, 0.12);
+    --teal: #4ca8a8;
+    --teal-dim: #2a5f5f;
+    --teal-glow: rgba(76, 168, 168, 0.12);
+    --green: #6aad48;
+    --green-dim: #3a5f28;
+    --green-glow: rgba(106, 173, 72, 0.12);
+
+    /* Extended cohort palette: tokens 5-8 of the per-actor color rotation.
+       Used by getActorColorVar() to give each actor in a swarm a
+       visually distinct color when N > 4. Hues sit at roughly even
+       distances around the color wheel from the existing amber / teal /
+       rust / green so no two adjacent slots collide. Each pairs with a
+       light-mode override at the same index in `.light` below. */
+    --violet: #9d7ec8;
+    --violet-dim: #5a3d80;
+    --violet-glow: rgba(157, 126, 200, 0.12);
+    --coral: #d97896;
+    --coral-dim: #8c3855;
+    --coral-glow: rgba(217, 120, 150, 0.12);
+    --sky: #5fa8d9;
+    --sky-dim: #1f5a85;
+    --sky-glow: rgba(95, 168, 217, 0.12);
+    --olive: #c4a93a;
+    --olive-dim: #6a5e1c;
+    --olive-glow: rgba(196, 169, 58, 0.12);
+
+    /* Legacy accent aliases */
+    --accent-primary: var(--amber);
+    --accent-secondary: var(--rust);
+    --accent-warm: var(--rust);
+    --accent-hover: #f0c060;
+
+    /* === BORDERS === */
+    --border: #302a22;
+    --border-hl: #4a3f30;
+    --border-primary: var(--border);
+    --border-subtle: #242018;
+    --border-interactive: var(--border-hl);
+
+    /* === SIDE COLORS (Visionary vs Engineer) === */
+    --vis: #e8b44a;
+    --eng: #4ca8a8;
+    --side-a: var(--vis);
+    --side-b: var(--eng);
+
+    /* === STATES === */
+    --color-success: var(--green);
+    --color-warning: var(--amber);
+    --color-error: var(--rust);
+
+    /* === EFFECTS === */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+    /* === RADIUS — tight, not rounded === */
+    --radius-sm: 3px;
+    --radius-md: 4px;
+    --radius-lg: 6px;
+    --radius-xl: 8px;
+
+    /* === Z-INDEX LAYERS ===
+       Five named layers covering every overlay surface in the dashboard.
+       Use the variable, not a literal. Higher = nearer to the user.
+
+       --z-popover            popovers anchored to a control (RunMenu,
+                              LoadMenu, AddFilterPopover). Above content,
+                              below dialogs.
+       --z-modal              context modals (CompareModal). Sits below
+                              the detail drawer because the drawer is
+                              opened FROM the modal and must layer above.
+       --z-drawer             slide-in detail drawer (RunDetailDrawer).
+                              Sits above context modals so it stays
+                              reachable when nested.
+       --z-modal-top          top-level dialogs that are the focus of
+                              attention (ForkModal, ActorPresetPicker).
+       --z-modal-critical     critical full-viewport dialogs that should
+                              cover everything (VerdictModal,
+                              LoadPreviewModal).
+       --z-overlay            drag-drop / system overlay above all
+                              dialogs (DropZoneOverlay).
+    */
+    --z-popover:         100;
+    --z-modal:           200;
+    --z-drawer:          300;
+    --z-modal-top:       1000;
+    --z-modal-critical:  100000;
+    --z-overlay:         100001;
+
+    /* Select caret. Data URLs cannot read CSS variables, so each theme
+       gets its own encoded chevron matching the theme's text-2 tone. */
+    --select-caret-url: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%23d8ccb0' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  }
+
+  /* === LIGHT MODE — warm sepia, aged parchment, WCAG AA compliant === */
+  .light {
+    color-scheme: light;
+
+    /* Backgrounds — bright warm parchment, panels elevated above page.
+     * The hierarchy mirrors dark mode: --bg-deep is the page floor,
+     * every other surface sits ABOVE it. The prior --bg-panel: #e6d6b8
+     * was 10 shades below --bg-deep, which inverted the dark-mode
+     * relationship — panels read as recessed bruises and the VIZ tab
+     * (58 bg-panel surfaces) felt dim across the board. Lifted page
+     * brightness AND moved --bg-panel above --bg-deep so panels pop as
+     * elevated cream rather than sinking below the page. Contrast still
+     * clears WCAG AA for all text/accent tokens listed below. */
+    --bg-deep: #f0e6d2;
+    --bg-panel: #f3eada;
+    --bg-card: #f8f0e0;
+    --bg-input: #ffffff;
+    --bg-elevated: #f8f0e0;
+
+    /* Glassmorphic — warm frosted glass */
+    --glass-bg: rgba(250, 243, 223, 0.88);
+    --glass-border: rgba(160, 140, 110, 0.5);
+    --glass-shadow: 0 4px 24px rgba(60, 40, 10, 0.12), 0 1px 2px rgba(60, 40, 10, 0.08);
+    --glass-glow: 0 0 30px rgba(160, 120, 40, 0.06);
+
+    /* Depth — warm shadows */
+    --inset-shadow: inset 0 1px 0 rgba(255, 245, 220, 0.6), inset 0 -1px 0 rgba(80, 60, 20, 0.08);
+    --card-shadow: 0 2px 8px rgba(60, 40, 10, 0.1), 0 0 1px rgba(60, 40, 10, 0.06);
+    --raised-shadow: 0 4px 16px rgba(60, 40, 10, 0.15), 0 1px 3px rgba(60, 40, 10, 0.1);
+
+    /* Text — high contrast on sepia (all pass WCAG AA on #f0e6d2) */
+    --text-1: #1a1208;     /* ~14:1 contrast — near black */
+    --text-2: #2e2418;     /* ~10:1 contrast — dark brown */
+    --text-3: #4a3e2c;     /* ~6:1 contrast — warm mid */
+    --text-4: #6a5c44;     /* ~4:1 contrast — muted */
+    --text-contrast: #faf6ee;
+
+    /* Accents — rich and saturated on sepia */
+    --rust: #8e2c0c;       /* deep terracotta — bumped from #a83810 (4.13:1) to clear AA 4.5:1 against sepia bg */
+    --rust-dim: #5a1e06;
+    --rust-glow: rgba(142, 44, 12, 0.12);
+    --amber: #6b4700;      /* burnt gold — bumped from #7a5200 for 4.5:1 AA on sepia bg */
+    --amber-dim: #463000;
+    --amber-glow: rgba(107, 71, 0, 0.1);
+    --teal: #186060;       /* deep ocean */
+    --teal-dim: #0e4040;
+    --teal-glow: rgba(24, 96, 96, 0.1);
+    --green: #305a10;      /* forest */
+    --green-dim: #203e08;
+    --green-glow: rgba(48, 90, 16, 0.1);
+
+    /* Extended cohort palette — light-mode overrides. Each darker than
+       its dark-mode counterpart so contrast on the sepia background
+       clears WCAG AA 4.5:1. Same slot order as `:root` above. */
+    --violet: #4a2e80;     /* deep aubergine — 7.2:1 on sepia */
+    --violet-dim: #2a1a4a;
+    --violet-glow: rgba(74, 46, 128, 0.1);
+    --coral: #8c2548;      /* deep raspberry — 7.0:1 on sepia */
+    --coral-dim: #5a1530;
+    --coral-glow: rgba(140, 37, 72, 0.1);
+    --sky: #155080;        /* deep ocean blue — 7.4:1 on sepia */
+    --sky-dim: #0c3050;
+    --sky-glow: rgba(21, 80, 128, 0.1);
+    --olive: #5a4a10;      /* dark mustard — 7.5:1 on sepia */
+    --olive-dim: #3a2f08;
+    --olive-glow: rgba(90, 74, 16, 0.1);
+
+    /* Borders — warm and defined */
+    --border: #b8a888;
+    --border-hl: #9a8868;
+    --border-subtle: #c8bca0;
+    --border-interactive: var(--border-hl);
+
+    /* Side colors — AA compliant on sepia (4.5:1 minimum). Bumped
+       --vis from #7a5200 (4.28:1) to #6b4700 to clear the threshold. */
+    --vis: #6b4700;
+    --eng: #186060;
+
+    /* Shadows — warm-tinted */
+    --shadow-sm: 0 1px 2px rgba(60, 40, 10, 0.1);
+    --shadow-md: 0 4px 12px rgba(60, 40, 10, 0.12);
+
+    /* Re-declare ALL aliases so they resolve to light values */
+    --text-primary: var(--text-1);
+    --text-secondary: var(--text-2);
+    --text-muted: var(--text-3);
+    --text-placeholder: var(--text-4);
+    --accent-primary: var(--amber);
+    --accent-secondary: var(--rust);
+    --accent-warm: var(--rust);
+    --accent-hover: #8a6a10;
+    --bg-primary: var(--bg-deep);
+    --bg-secondary: var(--bg-panel);
+    --bg-tertiary: var(--bg-card);
+    --border-primary: var(--border);
+    --border-interactive: var(--border-hl);
+    --border-subtle: #c8bca0;
+    --side-a: var(--vis);
+    --side-b: var(--eng);
+    --color-success: var(--green);
+    --color-warning: var(--amber);
+    --color-error: var(--rust);
+
+    /* Darker caret for the cream background. */
+    --select-caret-url: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%232e2418' stroke-width='2' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  }
+
+  /* === GLOBAL TYPOGRAPHY === */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--mono);
+    color: var(--text-1);
+    line-height: 1.3;
+  }
+
+  input, textarea, select, button {
+    font-family: var(--sans);
+    font-size: 14px;
+  }
+
+  code, pre, .mono {
+    font-family: var(--mono);
+  }
+
+  a {
+    color: var(--amber);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+
+  /* === FOCUS STYLES (a11y) ===
+     All interactive elements share a consistent amber ring so
+     keyboard users can track focus across pills, chronicle dots,
+     LoadMenu cards, settings-drawer toggles, etc. The box-shadow
+     variant is a fallback for elements inside `overflow: hidden`
+     containers that would otherwise clip the outline — setting
+     both means one of them lands regardless of ancestor layout. */
+  *:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgba(232, 180, 74, 0.35);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgba(232, 180, 74, 0.35);
+  }
+
+  a:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 0 0 2px rgba(232, 180, 74, 0.35);
+  }
+
+  input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+    box-shadow: 0 0 0 2px rgba(232, 180, 74, 0.25);
+  }
+
+  /* Canvas elements that act as interactive surfaces (the per-leader
+     swarm grid) need their own ring since they receive focus via
+     keyboard tab-nav but don't match a selector above (they already
+     default to outline:none via the canvas UA style). */
+  canvas:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgba(232, 180, 74, 0.35);
+  }
+
+  /* === SCROLLBAR === */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: var(--bg-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--border-hl); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+  ::-webkit-scrollbar-corner { background: var(--bg-deep); }
+
+  /* Light mode scrollbar — sepia-toned */
+  .light ::-webkit-scrollbar-track { background: var(--bg-panel); }
+  .light ::-webkit-scrollbar-thumb { background: var(--border-hl); border-radius: 3px; }
+  .light ::-webkit-scrollbar-thumb:hover { background: var(--text-4); }
+
+  /* === FORM CONTROLS === */
+  input[type=range] { -webkit-appearance: none; appearance: none; background: transparent; cursor: pointer; height: 20px; }
+  input[type=range]::-webkit-slider-track { height: 4px; background: var(--border); border-radius: 2px; }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 14px; height: 14px; border-radius: 50%;
+    margin-top: -5px; border: none; background: var(--amber);
+    box-shadow: 0 1px 4px rgba(0,0,0,.3), 0 0 0 2px var(--bg-deep);
+  }
+  input[type=range]::-moz-range-track { height: 4px; background: var(--border); border-radius: 2px; border: none; }
+  input[type=range]::-moz-range-thumb {
+    width: 14px; height: 14px; border-radius: 50%; border: none; background: var(--amber);
+    box-shadow: 0 1px 4px rgba(0,0,0,.3), 0 0 0 2px var(--bg-deep);
+  }
+
+  select {
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238a7e6c'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 6px center;
+    padding-right: 18px !important;
+  }
+
+  /* === GLASSMORPHIC CARD UTILITY === */
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow), var(--inset-shadow);
+    border-radius: var(--radius-md);
+  }
+
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--card-shadow);
+  }
+
+  .card-raised {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--raised-shadow), var(--inset-shadow);
+  }
+
+  /* === ANIMATIONS === */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes glow { 0%, 100% { box-shadow: 0 0 0 transparent; } 50% { box-shadow: 0 0 6px var(--rust-glow); } }
+  @keyframes forgeGlow {
+    0% { box-shadow: var(--card-shadow); }
+    30% { box-shadow: var(--card-shadow), 0 0 12px var(--green-glow); }
+    100% { box-shadow: var(--card-shadow), 0 0 2px var(--green-glow); }
+  }
+  @keyframes decisionPulse {
+    0% { box-shadow: var(--card-shadow); }
+    40% { box-shadow: var(--card-shadow), 0 0 15px var(--amber-glow); }
+    100% { box-shadow: var(--card-shadow), 0 0 3px var(--amber-glow); }
+  }
+  @keyframes toastIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes toastOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+
+  /* Logo glow */
+  @keyframes logoGlow {
+    0%, 100% { opacity: 0.4; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.08); }
+  }
+  .pc-logo-glow { animation: logoGlow 4s ease-in-out infinite; }
+
+  /* Additional animations from legacy / visual flair */
+  @keyframes forgeSlide { from { transform: translateX(-6px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--amber);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes criticalFlash { 0% { border-color: var(--rust); } 50% { border-color: rgba(224, 101, 48, 0.4); } 100% { border-color: var(--rust); } }
+  @keyframes barGrow { from { width: 0; } }
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  @keyframes scanline {
+    0% { transform: translateY(-100%); opacity: 0; }
+    50% { opacity: 0.05; }
+    100% { transform: translateY(100dvh); opacity: 0; }
+  }
+  @keyframes ambientGlow {
+    0%, 100% { box-shadow: var(--card-shadow), 0 0 20px var(--amber-glow); }
+    50% { box-shadow: var(--card-shadow), 0 0 40px var(--amber-glow), 0 0 60px rgba(232, 180, 74, 0.04); }
+  }
+  @keyframes borderPulse {
+    0%, 100% { border-color: var(--border); }
+    50% { border-color: var(--amber-dim); }
+  }
+
+  /* === INTERACTIVE HOVER EFFECTS === */
+  .hover-glow {
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .hover-glow:hover {
+    box-shadow: var(--card-shadow), 0 0 12px var(--amber-glow);
+    border-color: var(--amber-dim);
+  }
+
+  .hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .hover-lift:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--raised-shadow);
+  }
+
+  /* === TERMINAL SCAN EFFECT (optional per-page) === */
+  .scanline-overlay::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(180deg, transparent, rgba(232, 180, 74, 0.03), transparent);
+    animation: scanline 8s linear infinite;
+    pointer-events: none;
+    z-index: 99998;
+  }
+
+  /* === PROGRESS BAR === */
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--vis), var(--eng));
+    transition: width 0.5s ease;
+    border-radius: 1px;
+    animation: barGrow 0.6s ease both;
+  }
+
+  /* === RESPONSIVE — MOBILE FIRST === */
+
+  /* Tablet and below */
+  /* Wider than 1024 but still narrow enough that the full topbar
+     (logo + PARACOSM + AGENTOS + | + scenario name + turn meta +
+     progress bar + GITHUB + HOW IT WORKS + RUN + Save + Copy + Load
+     + Clear + status + theme) overflows. At ~1440 the scenario name
+     already starts kissing the turn meta block once a sim is mid-
+     run. Drop AGENTOS + scenario name here, before the collision. */
+  @media (max-width: 1440px) {
+    .topbar-agentos { display: none !important; }
+    .topbar-scenario { display: none !important; }
+  }
+
+  /* Narrow desktop / tablet landscape. At this width even without
+     the scenario name the tour-label + some action labels start
+     overlapping, so fold the tour button to an icon + drop the
+     per-turn progress bar. */
+  @media (max-width: 1200px) {
+    .topbar-tour-label { display: none !important; }
+    .topbar-tour-icon { display: inline !important; }
+    .topbar-progress { display: none !important; }
+  }
+
+  /* Tablet / narrow laptop. Matches ReportSideNav's own desktop gate
+     (min-width: 1024px): below this width the side rail renders as a
+     horizontal pill strip, so flip the outer Reports flex container
+     to column-stacking so the pills go above the content instead of
+     shrinking the content column to ~20px wide — which was rendering
+     `<details>` summaries as vertical one-char-per-line text.
+     `order: -1` on the sidenav pulls it above the content even though
+     the sidenav is rendered AFTER the content div in JSX (which is
+     the right spot for the desktop right-rail layout). */
+  @media (max-width: 1023.98px) {
+    .reports-layout { flex-direction: column !important; }
+    .reports-layout > nav[aria-label="Report sections"] { order: -1 !important; }
+  }
+
+  /* Let the topbar's own flex children shrink below their content
+     width. Without min-width:0 on the flex items, long text blocks
+     refuse to shrink at all and the row blows past the viewport. */
+  .topbar > div { min-width: 0; }
+  .topbar-scenario {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 180px;
+  }
+
+  @media (max-width: 768px) {
+    body { font-size: 11px; }
+
+    .responsive-grid-2 { grid-template-columns: 1fr !important; }
+    .responsive-grid-3 { grid-template-columns: 1fr 1fr !important; }
+    .responsive-grid-4 { grid-template-columns: 1fr 1fr !important; }
+    .responsive-stack { flex-direction: column !important; }
+    .responsive-hide { display: none !important; }
+    .responsive-full { width: 100% !important; }
+
+    /* SimView grid: TurnGrid now owns the .sim-columns className, but
+       the grid itself is already a vertical flex (header above scroll).
+       The previous `flex-direction: column !important` rule is a no-op
+       here and the `min-height: 200px` per-column rule is irrelevant
+       (no per-leader columns exist any more). TurnRow handles its own
+       internal stacking via its own media query in TurnRow.module.scss. */
+
+    /* Leaders stack into two rows, each full width. The 280px floor
+       on each panel exists for the VIZ canvas (Conway grid / RD field /
+       glyphs) — without it, flex:1-of-remaining-height collapses panels
+       to ~100px slivers on short viewports. SIM tab uses the same
+       `.leaders-row` class but its ActorBar columns are short summary
+       headers that don't need a tall canvas, so scope the min-height
+       to `.viz-content` only. SimView's compact leader cards then
+       size to content instead of leaving a 280px void below each
+       header. */
+    .leaders-row { flex-direction: column !important; }
+    .leaders-row > div { width: 100% !important; }
+    .viz-content .leaders-row > div { min-height: 280px !important; }
+
+    /* Chat sidebar collapse moved to the phone-only @media block below
+       (640px). Tablet (~768px) keeps the side-by-side roster + chat
+       window because the agent list needs vertical room and the empty-
+       state takes most of the screen otherwise. */
+
+    /* About page padding */
+    .about-content { padding: 16px !important; }
+
+    /* Settings padding */
+    .settings-content { padding: 16px !important; }
+
+    /* Reports padding */
+    .reports-content { padding: 16px !important; }
+
+    /* TopBar compact. Further drops (agentos tag, scenario name, tour
+       label) already triggered by the 1024px block above. */
+    .topbar-center { display: none !important; }
+
+    /* Timeline stacks */
+    .timeline-row { flex-direction: column !important; max-height: 200px !important; }
+
+    /* DivergenceRail stacks */
+    .diverge-sides { flex-direction: column !important; }
+
+    /* Stats bar stays a single row at every width; scrolls horizontally
+       when pills do not fit. Wrapping onto two rows at common desktop
+       widths where the set almost fit produced a jarring layout. */
+    .stats-bar { overflow-x: auto !important; justify-content: flex-start !important; -webkit-overflow-scrolling: touch; }
+
+    /* TabBar stays a single row at every width now that labels switch
+       to icons below 900px in TabBar.module.scss. The bar horizontal-scrolls
+       past very narrow viewports (tab count × 44px min-width) so each tap
+       target stays readable rather than crushing into 24px slivers,
+       and `-webkit-overflow-scrolling: touch` keeps momentum on iOS. */
+    .tab-bar {
+      flex-wrap: nowrap !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch;
+    }
+    .tab-bar button { flex-shrink: 0 !important; min-width: 44px !important; }
+  }
+
+  /* Narrow tablet portrait / phone landscape. The mid-row of T / Y / S
+     meta tokens + the GITHUB chip + the status pill all fight the
+     PARACOSM logo for horizontal space below ~640px and used to render
+     overlapping. Drop the meta tokens (still visible on the StatsBar
+     pills below the topbar) and collapse GITHUB to icon-only here so
+     the brand never collides with the action cluster. */
+  @media (max-width: 640px) {
+    .topbar-meta { display: none !important; }
+    .topbar-github-label { display: none !important; }
+    .topbar-github { padding-left: 7px !important; padding-right: 7px !important; }
+    /* Hide the "Live"/"Complete" status text; the colored dot still
+       conveys state, freeing room for the overflow menu + theme toggle. */
+    .topbar-status-text { display: none !important; }
+
+    /* Chat sidebar collapses on phones (was at 768px and stranded the
+       tablet chat empty-state under a 180px-tall roster strip). At
+       640px the screen is narrow enough that vertical stack reads
+       better than the side-by-side roster + window. */
+    .chat-layout { flex-direction: column !important; }
+    .chat-sidebar { width: 100% !important; max-height: 180px !important; }
+
+    /* Footer wraps onto multiple rows below ~640px because the nav
+       links + status chip + cost span + brand attribution can't fit a
+       single row. Justify-content: flex-start so wrapped rows hug the
+       left edge instead of leaving uneven gaps from space-between, and
+       tighten padding for phone density. */
+    footer[role="contentinfo"] {
+      justify-content: flex-start !important;
+      padding: 6px 12px !important;
+      row-gap: 6px !important;
+    }
+  }
+
+  /* Phone */
+  @media (max-width: 480px) {
+    body { font-size: 11px; }
+
+    .responsive-grid-3 { grid-template-columns: 1fr !important; }
+    .responsive-grid-4 { grid-template-columns: 1fr !important; }
+
+    /* Leader bar compact on phone */
+    .leader-traits { display: none !important; }
+    .leader-sparklines { display: none !important; }
+    .leaders-row { flex-direction: column !important; }
+    .leaders-row > div { width: 100% !important; }
+
+    /* Stats bar: collapse full-word pill labels to single-char icons so
+       POP / MORALE / POWER / DEATHS / TOOLS / CITES / REUSE fit a single
+       phone-width row instead of forcing horizontal scroll. The data
+       attribute carries the short label; .pill-label-full hides and
+       .pill-label-short shows at <480px. */
+    .pill-label-full { display: none !important; }
+    .pill-label-short { display: inline !important; }
+
+    /* TabBar stays at the 44px touch floor on phones. Very narrow
+       viewports can scroll the row horizontally instead of shrinking
+       tap targets below a comfortable size. */
+    .tab-bar button { min-width: 44px !important; padding: 6px 0 !important; }
+  }
+
+  /* The short-label span stays hidden above phone breakpoint. */
+  .pill-label-short { display: none; }
+
+  /* === HEXACO range slider ===
+     Native <input type="range"> renders with browser-default tracks
+     (light gray on white) which vanish on the dark theme — only the
+     thumb dot was visible. Custom track + thumb styling for both
+     WebKit and Firefox so the rail is always legible, with the
+     accent-color filling the left of the thumb. */
+  input[type="range"].pc-range,
+  input[type="range"].pc-range:focus {
+    -webkit-appearance: none;
+    appearance: none;
+    background: transparent;
+    height: 18px;
+    width: 100%;
+    cursor: pointer;
+    outline: none;
+  }
+  /* WebKit (Chrome, Safari, Edge) */
+  input[type="range"].pc-range::-webkit-slider-runnable-track {
+    height: 4px;
+    background: linear-gradient(
+      to right,
+      var(--pc-range-fill, var(--amber)) 0%,
+      var(--pc-range-fill, var(--amber)) var(--pc-range-pct, 50%),
+      var(--border) var(--pc-range-pct, 50%),
+      var(--border) 100%
+    );
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  input[type="range"].pc-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--pc-range-fill, var(--amber));
+    border: 2px solid var(--bg-deep);
+    box-shadow: 0 0 0 1px var(--pc-range-fill, var(--amber)), 0 1px 4px rgba(0, 0, 0, 0.4);
+    margin-top: -6px;
+    cursor: grab;
+    transition: transform 0.1s;
+  }
+  input[type="range"].pc-range::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.15);
+  }
+  /* Firefox */
+  input[type="range"].pc-range::-moz-range-track {
+    height: 4px;
+    background: var(--border);
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  input[type="range"].pc-range::-moz-range-progress {
+    height: 4px;
+    background: var(--pc-range-fill, var(--amber));
+    border-radius: 999px;
+  }
+  input[type="range"].pc-range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--pc-range-fill, var(--amber));
+    border: 2px solid var(--bg-deep);
+    box-shadow: 0 0 0 1px var(--pc-range-fill, var(--amber)), 0 1px 4px rgba(0, 0, 0, 0.4);
+    cursor: grab;
+  }
+  input[type="range"].pc-range:focus-visible::-webkit-slider-thumb {
+    box-shadow: 0 0 0 1px var(--pc-range-fill, var(--amber)), 0 0 0 4px rgba(232, 180, 74, 0.25);
+  }
+  input[type="range"].pc-range:focus-visible::-moz-range-thumb {
+    box-shadow: 0 0 0 1px var(--pc-range-fill, var(--amber)), 0 0 0 4px rgba(232, 180, 74, 0.25);
+  }
+
+  /* === SELECT DROPDOWN ===
+     Native <select> renders without any affordance on some browsers, so
+     the element reads as a plain input. Add a chevron caret per theme. */
+  select.pc-select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: var(--select-caret-url);
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px 8px;
+    padding-right: 30px;
+    cursor: pointer;
+  }
+
+  /* === AUTOMATON BAND (viz tab) ===
+     Collapsed state animates a side-tinted gradient to signal the
+     automaton is still running without the full canvas visible. */
+  @keyframes automaton-pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 0.95; }
+  }
+
+  /* === REDUCED MOTION (a11y) === */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* === PRINT STYLES === */
+  @media print {
+    body {
+      background: white !important;
+      color: black !important;
+      font-size: 10pt;
+    }
+    .topbar, .tab-bar, .toolbar, footer, .skip-to-content {
+      display: none !important;
+    }
+  }
+
+  /* === HIGH CONTRAST MODE === */
+  @media (forced-colors: active) {
+    .glass-card, .card, .card-raised {
+      border: 2px solid CanvasText;
+    }
+    button {
+      border: 1px solid ButtonText;
+    }
+  }
+}

@@ -1,0 +1,298 @@
+@use '../../theme/typography' as typo;
+
+.card {
+  max-width: 920px;
+  margin: 16px auto 0;
+  width: 100%;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--sans);
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+// "Run a digital twin" — sentence case.
+.title {
+  @include typo.card-title;
+  color: var(--amber);
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0.4px;
+}
+
+// "any subject · any intervention" — sentence-case prose, not a single
+// uppercase eyebrow token; switch to caption to drop the shout.
+.eyebrow {
+  @include typo.caption;
+  color: var(--text-3);
+}
+
+.copy {
+  color: var(--text-2);
+  font-size: var(--font-md);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.presetRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+}
+
+.presetLabel {
+  @include typo.section-label;
+  color: var(--text-3);
+  margin-right: 4px;
+}
+
+.presetButton {
+  background: transparent;
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    border-color: var(--amber);
+    color: var(--amber);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.presetButtonActive {
+  background: rgba(232, 180, 74, 0.12);
+  border-color: var(--amber);
+  color: var(--amber);
+}
+
+.presetClear {
+  background: transparent;
+  color: var(--text-3);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  cursor: pointer;
+  margin-left: auto;
+  transition: color 0.15s ease, border-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    color: var(--text-1);
+    border-color: var(--border-hl);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.presetBlurb {
+  color: var(--text-3);
+  font-size: var(--font-sm);
+  line-height: 1.55;
+  margin: -4px 0 0;
+  font-style: italic;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  // Two-column needs ~440px per column for placeholders to breathe;
+  // collapse to single column under 960px so nothing runs into nothing.
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.formCell {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+  min-width: 0;
+
+  &:disabled {
+    opacity: 0.7;
+  }
+}
+
+.formLegend {
+  @include typo.card-title;
+  color: var(--text-3);
+  // Override browser-default legend behavior (overlapping the fieldset
+  // top border) so the heading sits cleanly inside the card with the
+  // same horizontal alignment as the field labels below it.
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin: 0 0 8px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fieldRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fieldThird {
+  flex: 1 1 0;
+  min-width: 90px;
+}
+
+.fieldLabel {
+  @include typo.field-label;
+  color: var(--text-3);
+}
+
+.input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-size: var(--font-md);
+  line-height: 1.4;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    border-color: var(--amber);
+  }
+
+  &::placeholder {
+    color: var(--text-4);
+    opacity: 0.85;
+  }
+}
+
+.textarea {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 11px;
+  color: var(--text-1);
+  font-family: var(--sans);
+  font-size: var(--font-md);
+  line-height: 1.55;
+  resize: vertical;
+  min-height: 64px;
+  outline: none;
+  transition: border-color 0.15s ease;
+
+  &:focus {
+    border-color: var(--amber);
+  }
+
+  &::placeholder {
+    color: var(--text-4);
+    opacity: 0.85;
+  }
+}
+
+.mono {
+  font-family: var(--mono);
+  font-size: var(--font-sm);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+
+.button {
+  background: var(--amber);
+  color: var(--text-contrast);
+  font-family: var(--mono);
+  font-size: var(--font-sm);
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 11px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #ffe89c;
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+}
+
+.helper {
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+}
+
+.spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 217, 112, 0.3);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: idc-spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: -2px;
+  margin-right: 8px;
+}
+
+.timer {
+  color: var(--amber);
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+}
+
+@keyframes idc-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

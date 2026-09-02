@@ -1,0 +1,89 @@
+// Per-turn divergence mini-map. One pill per past turn, colored by
+// classification, click to scroll the TurnGrid to that row.
+
+.rail {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 16px;
+  background: linear-gradient(90deg, rgba(232, 180, 74, 0.04), rgba(76, 168, 168, 0.04));
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
+.heading {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--text-3);
+  font-size: var(--font-3xs);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.pills {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-2);
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &:focus-visible { outline: 2px solid var(--amber); outline-offset: 1px; }
+  &:hover { background: var(--bg-panel); }
+}
+
+.same {
+  color: var(--text-3);
+}
+
+.differentOutcome {
+  color: var(--amber);
+  border-color: color-mix(in srgb, var(--amber) 40%, transparent);
+  background: rgba(232, 180, 74, 0.08);
+}
+
+.differentEvent {
+  color: var(--rust);
+  border-color: color-mix(in srgb, var(--rust) 40%, transparent);
+  background: rgba(224, 101, 48, 0.08);
+}
+
+.pending {
+  color: var(--text-3);
+  border-style: dashed;
+  font-style: italic;
+}
+
+.oneSided {
+  color: var(--text-4);
+  border-style: dotted;
+}
+
+.pillGlyph { font-size: var(--font-xs); }
+.pillTurn { font-size: var(--font-3xs); }
+
+@media (max-width: 600px) {
+  .rail { padding: 6px 10px; }
+}

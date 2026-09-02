@@ -1,0 +1,196 @@
+// Loaded-scenario CTA — primary card above the paste/URL/PDF tabs in
+// SeedInput. Inherits the dark-panel + amber-accent treatment from the
+// landing-page hero CTA so the affordance reads as the recommended path.
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  padding: 16px 18px;
+  background: var(--bg-card);
+  border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+  border-left: 3px solid var(--amber);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(232, 180, 74, 0.08);
+}
+
+.heading {
+  font-family: var(--mono);
+  font-size: var(--font-md);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--amber);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.subline {
+  font-size: var(--font-sm);
+  color: var(--text-2);
+  line-height: 1.45;
+  font-style: italic;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+// Scenario picker row. Same metric/font shape as .actorRow so the
+// stack of "Scenario" → "Actors" reads as one settings cluster, not
+// two competing UI styles. Only renders when the catalog has 2+
+// scenarios so single-builtin installs don't show a redundant
+// dropdown.
+.scenarioPickerRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  color: var(--text-2);
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.scenarioPickerLabel {
+  flex-shrink: 0;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: var(--font-3xs);
+}
+
+.scenarioPickerSelect {
+  flex: 1;
+  min-width: 0;
+  background: var(--bg-deep);
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 4px 8px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+}
+
+.scenarioPickerHint {
+  flex-shrink: 0;
+  color: var(--text-3);
+  font-size: var(--font-3xs);
+  font-style: italic;
+}
+
+.actorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  color: var(--text-2);
+}
+
+.actorLabel {
+  flex-shrink: 0;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: var(--font-3xs);
+}
+
+.actorSlider {
+  flex: 1;
+  min-width: 0;
+}
+
+.actorValue {
+  flex-shrink: 0;
+  color: var(--text-1);
+  font-weight: 700;
+}
+
+.runButton {
+  width: 100%;
+  min-width: 0;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--rust), #c44a1e);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: var(--font-md);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  text-transform: uppercase;
+  white-space: normal;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+  box-shadow: 0 4px 16px rgba(224, 101, 48, 0.25);
+
+  &:hover { filter: brightness(1.08); }
+  &:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: none;
+  }
+}
+
+.runButtonFull {
+  display: inline;
+}
+
+.runButtonCompact {
+  display: none;
+}
+
+/* 1-2 sentence scenario lore line under the heading. Compact, prose
+   tone (not mono) so it reads as flavor text rather than data. Falls
+   out entirely when scenario.labels.tagline is absent — no empty
+   reservation. */
+.tagline {
+  margin: 0;
+  font-size: var(--font-xs);
+  color: var(--text-2);
+  line-height: 1.5;
+  max-width: 60ch;
+}
+
+.tradeoff {
+  font-size: var(--font-3xs);
+  font-family: var(--mono);
+  color: var(--text-3);
+  text-align: center;
+  letter-spacing: 0.04em;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 480px) {
+  .card {
+    gap: 8px;
+    padding: 14px;
+  }
+
+  .heading {
+    font-size: var(--font-sm);
+  }
+
+  .actorRow {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+  }
+
+  .runButton {
+    padding: 10px 12px;
+    font-size: var(--font-sm);
+    letter-spacing: 0.03em;
+  }
+
+  .runButtonFull {
+    display: none;
+  }
+
+  .runButtonCompact {
+    display: inline;
+  }
+}

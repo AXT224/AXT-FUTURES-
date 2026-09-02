@@ -1,0 +1,388 @@
+// Scenario catalog grid for Quickstart. Sits between the
+// LoadedScenarioCTA card (above) and the SeedInput / paste-new-
+// scenario form (below), so users browsing the catalog flow
+// naturally from "load the active one" → "browse alternatives" →
+// "compile a brand new one."
+
+.section {
+  margin: 24px 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.heading {
+  font-family: var(--mono);
+  font-size: var(--font-md);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin: 0;
+}
+
+.count {
+  color: var(--text-3);
+  font-weight: 400;
+  font-size: var(--font-sm);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.statusLine {
+  font-family: var(--mono);
+  font-size: var(--font-sm);
+  color: var(--text-3);
+  margin: 0;
+}
+
+.error {
+  color: var(--rust);
+}
+
+.actorRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  color: var(--text-2);
+  flex-wrap: nowrap;
+  min-width: 240px;
+}
+
+.actorLabel {
+  flex-shrink: 0;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  font-size: var(--font-3xs);
+}
+
+.actorSlider {
+  flex: 1;
+  min-width: 80px;
+}
+
+.actorValue {
+  flex-shrink: 0;
+  color: var(--text-1);
+  font-weight: 700;
+  min-width: 28px;
+  text-align: right;
+}
+
+// Search + chips row. Sits between the section header (counts +
+// actor slider) and the grid itself, so the user can narrow what
+// they're browsing without losing the run controls. Wraps to a
+// second line on narrow viewports.
+.filterRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.searchLabel {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+}
+
+.searchInput {
+  width: 100%;
+  background: var(--bg-deep);
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: var(--font-sm);
+
+  &::placeholder {
+    color: var(--text-3);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--amber);
+  }
+}
+
+.chipGroup {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  background: var(--bg-deep);
+  color: var(--text-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease;
+
+  &:hover {
+    border-color: var(--amber);
+    color: var(--text-1);
+  }
+}
+
+.chipActive {
+  background: var(--amber);
+  border-color: var(--amber);
+  color: var(--bg-deep);
+}
+
+.chipCount {
+  font-weight: 400;
+  margin-left: 4px;
+  opacity: 0.75;
+}
+
+// Sort dropdown sits at the right end of the filter row so it
+// reads as a tertiary control after search + chips. Same mono
+// + sized treatment as the search input so the row feels uniform.
+.sortLabel {
+  display: flex;
+  align-items: center;
+}
+
+.sortSelect {
+  background: var(--bg-deep);
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  cursor: pointer;
+
+  &:focus {
+    outline: none;
+    border-color: var(--amber);
+  }
+}
+
+.emptyMatches {
+  font-family: var(--mono);
+  font-size: var(--font-sm);
+  color: var(--text-3);
+  padding: 24px;
+  background: var(--bg-panel);
+  border: 1px dashed var(--border);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.clearFiltersBtn {
+  background: none;
+  border: none;
+  color: var(--amber);
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+// Auto-fit grid: cards take their natural minimum width, the row
+// flows to fit. On narrow viewports it collapses to one column.
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px;
+  transition: border-color 120ms ease, transform 120ms ease;
+
+  &:hover {
+    border-color: var(--amber);
+    transform: translateY(-1px);
+  }
+}
+
+// .cardBody is a <button> that wraps the clickable upper region of
+// each card (header / name / seed / stats). It's styled transparent
+// so the button affordance is purely "the whole row is clickable",
+// not a visible button rectangle. Run button below it stays distinct.
+.cardBody {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  width: 100%;
+
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+// Active scenario gets the amber halo so users can spot the loaded
+// one at a glance without scanning every badge.
+.cardActive {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 1px var(--amber);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.sourceBadge {
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid currentColor;
+}
+
+// Per-source tinting: the badge colors signal provenance at a
+// glance — green for builtins, blue for disk-curated, amber for
+// compile-from-seed customs.
+.badge_builtin { color: var(--green, #22c55e); }
+.badge_disk    { color: #3b82f6; }
+.badge_compiled, .badge_memory { color: var(--amber); }
+.badge_other   { color: var(--text-3); }
+
+.activeBadge {
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bg-deep);
+  background: var(--amber);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.cardName {
+  font-family: var(--sans);
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--text-1);
+  margin: 0;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.cardSeed {
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-2);
+  font-style: italic;
+  line-height: 1.4;
+  margin: 0;
+  // Cap the visual height so a long seed doesn't blow out the card
+  // alongside compact ones; user can hover for the full title.
+  max-height: 4.5em;
+  overflow: hidden;
+}
+
+.cardStats {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 0;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+}
+
+.statKey {
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.statValue {
+  color: var(--text-1);
+  font-size: var(--font-xs);
+  margin: 0;
+  font-weight: 700;
+}
+
+.runButton {
+  margin-top: auto;
+  background: linear-gradient(135deg, var(--amber), #c8952e);
+  color: var(--bg-deep);
+  border: none;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font-size: var(--font-xs);
+  font-family: var(--mono);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter 120ms ease;
+
+  &:hover:not(:disabled) {
+    filter: brightness(1.1);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 480px) {
+  .grid {
+    // Tighter min cell on phones so two cards fit a typical 360px
+    // viewport without forcing horizontal scroll.
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .actorRow {
+    min-width: 0;
+    width: 100%;
+  }
+}

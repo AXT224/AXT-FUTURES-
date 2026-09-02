@@ -1,0 +1,144 @@
+{
+  "name": "paracosm",
+  "version": "0.9.0",
+  "description": "Agent swarm simulation for structured world modeling with LLMs. Multi-agent worlds with HEXACO personalities, deterministic kernels, runtime tool forging, and reproducible forkable RunArtifacts. Built on AgentOS.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "paracosm": "./dist/cli/run.js",
+    "paracosm-dashboard": "./dist/cli/serve.js"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./core": {
+      "import": "./dist/engine/core/state.js",
+      "types": "./dist/engine/core/state.d.ts"
+    },
+    "./compiler": {
+      "import": "./dist/engine/compiler/index.js",
+      "types": "./dist/engine/compiler/index.d.ts"
+    },
+    "./schema": {
+      "import": "./dist/engine/schema/index.js",
+      "types": "./dist/engine/schema/index.d.ts"
+    },
+    "./swarm": {
+      "import": "./dist/runtime/swarm/index.js",
+      "types": "./dist/runtime/swarm/index.d.ts"
+    },
+    "./digital-twin": {
+      "import": "./dist/engine/digital-twin/index.js",
+      "types": "./dist/engine/digital-twin/index.d.ts"
+    }
+  },
+  "files": [
+    "dist/",
+    "scenarios/mars.json",
+    "scenarios/mars-knowledge.json",
+    "scenarios/lunar.json",
+    "scenarios/lunar-knowledge.json",
+    "scenarios/t2d-glp1-protocol.json",
+    "config/leaders.example.json",
+    "config/leaders.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json && chmod +x dist/cli/run.js dist/cli/serve.js 2>/dev/null || true",
+    "run": "npx tsx src/cli/run.ts",
+    "run:a": "npx tsx src/cli/run-a.ts",
+    "run:b": "npx tsx src/cli/run-b.ts",
+    "smoke": "npx tsx src/cli/run-a.ts 3",
+    "compare": "npx tsx src/cli/run-a.ts && npx tsx src/cli/run-b.ts",
+    "dashboard": "npx tsx src/cli/serve.ts",
+    "dashboard:dev": "cd src/dashboard && npx vite",
+    "dashboard:build": "cd src/dashboard && npx vite build",
+    "dashboard:smoke": "npx tsx src/cli/serve.ts 3",
+    "compile": "npx tsx src/cli/compile.ts",
+    "check:dashboard": "node --check src/dashboard/main.legacy.js",
+    "check:doc-examples": "npx tsx scripts/check-doc-examples.ts",
+    "check:boundary": "node scripts/check-engine-runtime-boundary.mjs",
+    "typecheck:dashboard": "tsc -p src/dashboard",
+    "test": "npm run check:boundary && npm run typecheck:dashboard && node --import tsx --import ./scripts/test-css-stub.mjs --test 'tests/**/*.test.ts' 'src/api/**/*.test.ts' 'src/cli/**/*.test.ts' 'src/engine/**/*.test.ts' 'src/runtime/**/*.test.ts' 'src/llm/**/*.test.ts' 'src/server/**/*.test.ts' 'src/dashboard/src/**/*.test.ts' 'src/dashboard/src/**/*.test.tsx'",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:install": "playwright install chromium",
+    "test:e2e:fixtures": "node tests-e2e/fixtures/build-fixtures.mjs",
+    "docs": "typedoc && cp assets/docs-theme/paracosm-override.css docs/api/assets/paracosm-override.css",
+    "changelog": "node scripts/generate-changelog.mjs",
+    "export:json-schema": "npx tsx scripts/export-json-schema.ts",
+    "snapshot:schema": "npx tsx scripts/snapshot-schema.ts",
+    "prepublishOnly": "npm run build",
+    "leader:a": "npx tsx src/cli/run-a.ts",
+    "leader:b": "npx tsx src/cli/run-b.ts"
+  },
+  "dependencies": {
+    "@framers/agentos": "^0.10.11",
+    "@framers/sql-storage-adapter": "^0.6.8",
+    "better-sqlite3": "^12.9.0",
+    "pdfjs-dist": "^5.7.284",
+    "resend": "^4.8.0",
+    "zod": "^4.4.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^25.6.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "pdf-lib": "^1.17.1",
+    "tsx": "^4.21.0",
+    "typedoc": "^0.28.0",
+    "typescript": "^5.4.0"
+  },
+  "keywords": [
+    "paracosm",
+    "agent-swarm",
+    "agent-swarm-simulation",
+    "multi-agent-simulation",
+    "multi-agent",
+    "world-model",
+    "structured-world-model",
+    "llm-world-model",
+    "llm-readable-world-model",
+    "world-modeling",
+    "prompt-to-world-model",
+    "prompt-to-simulation",
+    "http-api",
+    "counterfactual-simulation",
+    "cwsm",
+    "digital-twin",
+    "decision-simulation",
+    "scenario-simulation",
+    "simulation",
+    "ai-simulation",
+    "ai-agent-simulation",
+    "ai-agents",
+    "llm-agents",
+    "agent-based-modeling",
+    "abm",
+    "emergent-behavior",
+    "tool-forging",
+    "runtime-tool-forging",
+    "hexaco",
+    "personality",
+    "agentos",
+    "framers-agentos",
+    "typescript",
+    "framers",
+    "frame-dev"
+  ],
+  "author": "Frame <team@frame.dev>",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/framerslab/paracosm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/framerslab/paracosm/issues"
+  },
+  "homepage": "https://paracosm.agentos.sh"
+}

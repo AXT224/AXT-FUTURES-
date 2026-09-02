@@ -1,0 +1,214 @@
+// CohortSwarmGrid: horizontally-scrolling track of N actor columns.
+// Each column has a sticky-ish color-banded header and a fixed-width
+// LivingSwarmGrid (lazy-mounted) below. The track itself is the
+// horizontal scroller; the page's vertical scroll is unaffected.
+
+.track {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  // Vertical scroll on the track so a 640px+ column body never gets
+  // clipped invisible when the viewport leaves less than that under
+  // the TurnBanner + sub-tabs + chart strip. Was `hidden`, which hid
+  // the entire body when squeezed and left only column headers visible.
+  overflow-y: auto;
+  // Track bg matches its column bg so the cohort area reads as one
+  // uniform surface instead of a darker frame (bg-deep) wrapped
+  // around brighter columns (bg-panel). The contrast was visible
+  // enough in light mode to read as a gray "dim band" surrounding
+  // the actor cards.
+  background: var(--bg-panel);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  // Visible scrollbar so users know more columns sit past the viewport.
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-hl, var(--border)) transparent;
+  &::-webkit-scrollbar { height: 10px; }
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-hl, var(--border));
+    border-radius: 5px;
+  }
+  &::-webkit-scrollbar-track { background: transparent; }
+
+  // Phone: turn on scroll-snap so the column scroll-snap-align targets
+  // engage. Combined with the column's `calc(100vw - 32px)` width this
+  // produces a 1-column-per-page swipe experience instead of the user
+  // trying to read a half-visible column on the left edge.
+  @media (max-width: 480px) {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+.trackInner {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  padding: 12px;
+  // No min-width on the container — each column carries its own
+  // min-width so the flex row grows to accommodate them all and the
+  // outer .track wrapper handles overflow.
+  width: max-content;
+  min-width: 100%;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  width: 480px;
+  flex-shrink: 0;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--actor-color, var(--amber));
+  border-radius: 8px;
+  overflow: hidden;
+  // Reserve enough vertical room so each LivingSwarmGrid lands with
+  // its full HUD strip + canvas square + popovers visible inside the
+  // column. Tweaked to match the pair-mode side-by-side height.
+  min-height: 640px;
+
+  // Tablet (NARROW): shrink columns slightly so two fit side-by-side
+  // on a typical iPad portrait viewport (~768px) without the user
+  // needing to scroll just to see the second column header.
+  @media (max-width: 768px) {
+    width: 360px;
+    min-height: 520px;
+  }
+
+  // Phone (PHONE_QUERY): single column per viewport with scroll-snap
+  // so each swipe lands cleanly on the next actor instead of half-way
+  // between two. Width minus the track's 24px padding (12px each side)
+  // so the column fills the viewport without horizontal scrollbar
+  // overshoot. Height tuned for the smallest LivingSwarmGrid that
+  // still shows the HUD + canvas square at a useful size.
+  @media (max-width: 480px) {
+    width: calc(100vw - 32px);
+    min-height: 440px;
+    scroll-snap-align: start;
+  }
+}
+
+.columnHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--actor-color, var(--border));
+  flex-shrink: 0;
+
+  // Phone: shrink the header padding + gap so the slot label + name +
+  // pop chip stay on one line at narrow widths. Archetype already
+  // truncates with text-overflow: ellipsis so it shrinks naturally.
+  @media (max-width: 480px) {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+}
+
+.columnHeaderSlot {
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  font-weight: 800;
+  color: var(--actor-color, var(--amber));
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+
+.columnHeaderText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.columnHeaderName {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.columnHeaderArchetype {
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+.columnHeaderPop {
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-2);
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.columnBody {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+// Placeholder for lazy-mounted columns past the IntersectionObserver
+// trigger. Shimmer is a subtle CSS animation so it doesn't dominate
+// when many columns are still hydrating.
+.columnPlaceholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px;
+  // Flat actor-tinted panel instead of a fade-to-bg-deep gradient. The
+  // gradient produced a heavy dark band on each unmounted column in
+  // dark mode and an inverted dark-at-top stripe in light mode (where
+  // bg-deep is lighter than bg-panel). The shimmer already carries the
+  // loading affordance, so the gradient added nothing functional.
+  background: color-mix(in srgb, var(--actor-color, var(--amber)) 4%, var(--bg-panel));
+  min-height: 480px;
+}
+
+.columnPlaceholderShimmer {
+  width: 60%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--actor-color, var(--amber)) 35%, transparent) 50%,
+    transparent 100%
+  );
+  animation: cohort-shimmer 1.6s ease-in-out infinite;
+
+  // Honor reduced-motion preference so the shimmer doesn't pulse for
+  // users who've opted out. The gradient mid-stop still hints at
+  // "loading" so the affordance survives without animation.
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+.columnPlaceholderLabel {
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+@keyframes cohort-shimmer {
+  0%, 100% { opacity: 0.5; transform: translateX(-20px); }
+  50% { opacity: 1; transform: translateX(20px); }
+}

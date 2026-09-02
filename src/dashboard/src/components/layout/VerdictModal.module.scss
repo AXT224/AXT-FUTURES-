@@ -1,0 +1,213 @@
+// VerdictModal styles. Inline-object styles migrated to SCSS module
+// per the 2026-04-22 UI/UX audit finding F4.
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal-critical);
+  background: rgba(10, 8, 6, 0.78);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.dialog {
+  background: linear-gradient(180deg, var(--bg-panel) 0%, var(--bg-deep) 100%);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent, var(--amber));
+  border-radius: 10px;
+  padding: 20px 24px;
+  max-width: 640px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.6);
+  font-family: var(--sans);
+  color: var(--text-1);
+  position: relative;
+  outline: none;
+
+  &.winnerA { border-top-color: var(--vis); }
+  &.winnerB { border-top-color: var(--eng); }
+  &.winnerTie { border-top-color: var(--amber); }
+}
+
+.closeButton {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  font-size: var(--font-2xl);
+  line-height: 1;
+  padding: 4px;
+  z-index: 1;
+
+  &:hover { color: var(--text-1); }
+}
+
+/* ---------- Cohort verdict ---------- */
+
+.cohortDialog {
+  max-width: 820px;
+  border-top-color: var(--amber);
+}
+
+.cohortDetails {
+  padding: 12px 4px 8px;
+  color: var(--text-1);
+
+  // Phone: pull the padding flush with the dialog edge so 360px
+  // viewports get more rendering room for the headline + summary.
+  @media (max-width: 480px) {
+    padding: 8px 0 6px;
+  }
+}
+
+.cohortHeader {
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+}
+
+.cohortKicker {
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 6px;
+}
+
+.cohortHeadline {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--text-1);
+  margin: 0 0 12px;
+}
+
+.cohortSummary {
+  font-size: var(--font-md);
+  line-height: 1.65;
+  color: var(--text-2);
+  margin: 0 0 10px;
+}
+
+.cohortDivergence {
+  font-size: var(--font-sm);
+  line-height: 1.6;
+  color: var(--text-3);
+  margin: 0;
+
+  strong {
+    color: var(--text-2);
+    font-weight: 600;
+  }
+}
+
+.cohortRankings {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cohortRankingEntry {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 12px 14px;
+  background: color-mix(in srgb, var(--actor-color, var(--amber)) 6%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--actor-color, var(--amber)) 28%, transparent);
+  border-left: 3px solid var(--actor-color, var(--amber));
+  border-radius: 8px;
+
+  // Phone: tighten the badge column so the rationale text gets more
+  // horizontal room. The rank badge is short enough (#1 to #99) to
+  // still center-read at 40px while leaving meaningful body width.
+  @media (max-width: 480px) {
+    grid-template-columns: 40px 1fr;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+}
+
+.cohortRankBadge {
+  font-family: var(--mono);
+  font-size: var(--font-xl);
+  font-weight: 800;
+  color: var(--actor-color, var(--amber));
+  text-align: center;
+  letter-spacing: -0.02em;
+}
+
+.cohortRankBody {
+  min-width: 0;
+}
+
+.cohortRankName {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.cohortRankScores {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-3);
+  margin-bottom: 6px;
+
+  span {
+    color: var(--text-2);
+    letter-spacing: 0.04em;
+  }
+}
+
+.cohortRankRationale {
+  font-size: var(--font-sm);
+  line-height: 1.55;
+  color: var(--text-2);
+  margin: 0;
+}
+
+.cohortReasoning {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 14px;
+
+  summary {
+    font-family: var(--mono);
+    font-size: var(--font-2xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-3);
+    cursor: pointer;
+
+    &:hover { color: var(--text-2); }
+  }
+
+  pre {
+    margin: 10px 0 0;
+    padding: 12px 14px;
+    background: var(--bg-deep);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-size: var(--font-2xs);
+    color: var(--text-2);
+    white-space: pre-wrap;
+    line-height: 1.5;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+}

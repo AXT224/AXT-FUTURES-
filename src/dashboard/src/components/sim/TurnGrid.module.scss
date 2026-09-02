@@ -1,0 +1,26 @@
+// Top-level grid for the SIM tab's side-by-side mode. The compact-
+// ActorBar sticky header that used to live here was a duplicate of
+// SimView's leadersRow; SimView now owns the leader strip and TurnGrid
+// is just the scrollable list of TurnRow per turn.
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: var(--bg-deep);
+  overflow: hidden;
+}
+
+.scroll {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.empty {
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--text-3);
+  font-size: var(--font-md);
+}

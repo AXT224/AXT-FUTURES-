@@ -1,0 +1,80 @@
+@use '../../theme/typography' as typo;
+
+.strip {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+// .title here is a strip eyebrow (sits above a list of cards), so it's
+// rendered at section-label scale rather than panel-title scale.
+.title {
+  @include typo.section-label;
+  color: var(--text-3);
+}
+
+.toggle {
+  background: transparent;
+  border: 0;
+  color: var(--text-3);
+  font-size: var(--font-xl);
+  cursor: pointer;
+  font-family: var(--mono);
+  padding: 0 0.25rem;
+}
+
+.row {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.card {
+  flex: 0 0 auto;
+  background: var(--bg-elevated);
+  border: 1px solid var(--glass-border);
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 180px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--sans);
+  transition: border-color 200ms ease;
+
+  &:hover { border-color: var(--amber); }
+}
+
+.cardScenario {
+  font-size: var(--font-md);
+  color: var(--text-1);
+  font-weight: 600;
+}
+
+.cardLeader {
+  font-size: var(--font-sm);
+  color: var(--text-2);
+}
+
+.cardMode {
+  font-size: var(--font-2xs);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-3);
+
+  &[data-mode="turn-loop"]        { color: var(--teal); }
+  &[data-mode="batch-trajectory"] { color: var(--amber); }
+  &[data-mode="batch-point"]      { color: var(--rust); }
+}

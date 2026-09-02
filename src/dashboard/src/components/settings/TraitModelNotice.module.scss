@@ -1,0 +1,77 @@
+// TraitModelNotice: info notice block introducing pluggable trait
+// models in ActorConfig. Matches the dashboard's muted-card aesthetic.
+
+@use '../../theme/typography' as typo;
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  margin: 12px 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--amber);
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: var(--font-sm);
+  color: var(--text-2);
+}
+
+.badge {
+  @include typo.section-label;
+  flex-shrink: 0;
+  padding: 2px 7px;
+  background: var(--amber);
+  color: var(--bg-deep);
+  border-radius: 3px;
+  margin-top: 1px;
+}
+
+.body {
+  flex: 1;
+  min-width: 0;
+}
+
+// "Leaders accept pluggable trait models." sits inside the mono
+// .notice container, so keep mono here to avoid a family discontinuity.
+// body-strong would have switched to sans.
+.headline {
+  font-family: var(--mono);
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.copy {
+  margin: 0 0 8px 0;
+  line-height: 1.55;
+  color: var(--text-2);
+
+  code {
+    background: var(--bg-deep);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: var(--font-xs);
+    color: var(--amber);
+  }
+}
+
+.links {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.link {
+  color: var(--rust);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: var(--font-xs);
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}

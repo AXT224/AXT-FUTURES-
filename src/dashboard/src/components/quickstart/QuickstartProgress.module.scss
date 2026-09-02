@@ -1,0 +1,106 @@
+/* Quickstart progress panel: header strip + ordered list of expandable
+   stage cards + cancel CTA. The cards themselves carry their own
+   styling (QuickstartStageCard.module.scss); this file just lays them
+   out and styles the wrapper chrome. */
+
+@use '../../theme/typography' as typo;
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px clamp(14px, 3vw, 28px);
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-family: var(--sans);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 4px;
+}
+
+// .title here is a tiny eyebrow above the panel body, not a panel head;
+// rendered at section-label scale rather than panel-title.
+.title {
+  @include typo.section-label;
+  color: var(--amber);
+}
+
+.subtitle {
+  @include typo.body;
+  color: var(--text-2);
+}
+
+.stageList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  /* The whole list is the dashboard's central console — let it hold a
+     little internal padding-left so the per-card status markers align
+     into a clean column. */
+}
+
+.stageItem {
+  display: block;
+}
+
+.cancel {
+  align-self: flex-start;
+  background: transparent;
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.cancel:hover {
+  color: var(--rust);
+  border-color: rgba(176, 90, 50, 0.5);
+}
+
+.cancel:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+// Surfaced on the running / done stages so users don't have to watch
+// the staged progress panel while events are already streaming into
+// SIM. Primary-styled (amber fill) so it reads as the recommended
+// next action once the simulation is live.
+.jumpToSim {
+  align-self: flex-start;
+  background: var(--amber);
+  color: var(--bg-deep);
+  border: 1px solid var(--amber);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: filter 0.15s, transform 0.15s;
+  margin-bottom: 8px;
+
+  &:hover { filter: brightness(1.08); }
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+  }
+}

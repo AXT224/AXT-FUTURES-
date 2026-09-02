@@ -1,0 +1,171 @@
+// Migrated from inline `style={{}}`. Per-side colors flow in via
+// --side-a-color / --side-b-color CSS custom properties.
+
+.section {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  box-shadow: var(--card-shadow);
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+.sectionTitle {
+  font-size: var(--font-xs);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  font-family: var(--mono);
+}
+
+.legend {
+  font-size: var(--font-2xs);
+  font-family: var(--mono);
+  color: var(--text-3);
+}
+
+.legendA {
+  color: var(--side-a-color, var(--vis));
+  font-weight: 700;
+}
+
+.legendB {
+  color: var(--side-b-color, var(--eng));
+  font-weight: 700;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-2);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+
+.cardLabel {
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.cardRange { color: var(--text-3); }
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: var(--font-2xs);
+}
+
+.lastA {
+  color: var(--side-a-color, var(--vis));
+  font-weight: 700;
+}
+
+.lastB {
+  color: var(--side-b-color, var(--eng));
+  font-weight: 700;
+}
+
+/* Cohort variant: chips of the per-actor last-value, wrapping when
+ * many actors are present so a 12-actor cohort doesn't blow up the
+ * sparkline card's footer width. */
+.cardFooterCohort {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 4px;
+  font-size: var(--font-2xs);
+  font-family: var(--mono);
+}
+
+.lastCohort {
+  color: var(--actor-color, var(--text-3));
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* Cohort legend at the section header. Wrapping flex of per-actor
+ * chips; each chip carries the actor's color via the --actor-color
+ * CSS var set inline. */
+.legendCohort {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  max-width: 70%;
+  justify-content: flex-end;
+}
+
+.legendCohortEntry {
+  color: var(--actor-color, var(--text-2));
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--actor-color, var(--text-3));
+    flex-shrink: 0;
+    // No vertical-align: the parent's `align-items: baseline` already
+    // owns the cross-axis alignment for inline-flex children, and the
+    // vertical-align property is ignored on flex items.
+  }
+}
+
+.legendCohortSlot {
+  // Color-independent slot identifier (A, B, ... AA). Pairs with the
+  // color dot in ::before so color-vision-impaired readers can still
+  // identify each actor in the legend without relying on hue.
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--actor-color, var(--text-3));
+  padding: 1px 4px;
+  border: 1px solid color-mix(in srgb, var(--actor-color, var(--text-3)) 40%, transparent);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--actor-color, var(--text-3)) 8%, transparent);
+}
+
+.lastCohortSlot {
+  // Per-card last-value chip slot prefix. Mirrors .legendCohortSlot
+  // so the same A/B/C identifier carries from the section-header
+  // legend down into each metric card's footer values.
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  margin-right: 3px;
+  opacity: 0.7;
+}

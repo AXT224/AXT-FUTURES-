@@ -1,0 +1,320 @@
+@use '../../theme/typography' as typo;
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  height: 100%;
+  overflow: auto;
+}
+
+.dropZone {
+  border: 2px dashed var(--border, #444);
+  border-radius: 8px;
+  padding: 3rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  background: var(--surface-2, rgba(255, 255, 255, 0.02));
+}
+
+.dropZoneActive {
+  border-color: var(--accent, #4fb1ff);
+  background: var(--surface-3, rgba(79, 177, 255, 0.08));
+}
+
+.dropZoneError {
+  border-color: var(--danger, #e57373);
+  background: rgba(229, 115, 115, 0.06);
+}
+
+.dropZoneHint {
+  color: var(--text-dim, #888);
+  font-size: var(--font-lg);
+  margin-top: 0.5rem;
+}
+
+.fileInput {
+  display: none;
+}
+
+.errorBanner {
+  background: rgba(229, 115, 115, 0.1);
+  border: 1px solid var(--danger, #e57373);
+  border-radius: 4px;
+  padding: 0.75rem;
+  color: var(--danger, #e57373);
+}
+
+.errorHint {
+  font-size: var(--font-lg);
+  color: var(--text-dim, #888);
+  margin-top: 0.25rem;
+}
+
+.loadedBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  background: var(--surface-2);
+  font-size: var(--font-lg);
+}
+
+.artifactView {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.artifactHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.artifactScenario {
+  font-weight: 600;
+  font-size: var(--font-xl);
+}
+
+.artifactActor {
+  font-size: var(--font-lg);
+  color: var(--text-dim, #888);
+}
+
+.artifactActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.promoteBtn,
+.compareBtn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  cursor: pointer;
+}
+
+.promoteBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.artifactBody {
+  flex: 1;
+  min-height: 0;
+}
+
+.bundleGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.bundleCard {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  cursor: pointer;
+  background: var(--surface-2);
+  text-align: left;
+}
+
+.bundleCard:hover {
+  border-color: var(--accent, #4fb1ff);
+}
+
+.bundleCardTitle {
+  font-weight: 600;
+}
+
+.bundleCardMeta {
+  font-size: var(--font-md);
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+.bundleIdChip {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  color: var(--text-3);
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 3px 8px;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+.bundleActions {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.bundleDrillBack {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.guide {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--border, #2a2a2a);
+  border-radius: 8px;
+  background: var(--surface-2, rgba(255, 255, 255, 0.02));
+}
+
+.guideHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+// "How to get a RunArtifact JSON" — preserve casing.
+.guideTitle {
+  @include typo.panel-title;
+  margin: 0;
+  text-transform: none;
+  letter-spacing: 0.4px;
+}
+
+.guideSub {
+  margin: 0;
+  font-size: var(--font-lg);
+  color: var(--text-dim, #888);
+  line-height: 1.5;
+
+  code {
+    font-family: var(--mono, ui-monospace, monospace);
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    background: var(--surface-3, rgba(255, 255, 255, 0.06));
+  }
+}
+
+.guideSteps {
+  margin: 0;
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: var(--font-lg);
+  line-height: 1.55;
+
+  code {
+    font-family: var(--mono, ui-monospace, monospace);
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    background: var(--surface-3, rgba(255, 255, 255, 0.06));
+    color: var(--text, inherit);
+  }
+}
+
+.guideCtaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.guideCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--accent, #4fb1ff);
+  background: var(--accent, #4fb1ff);
+  // White text guarantees AA contrast against any --accent value the
+  // host page injects (was #000 → 4.34:1 against the live #dc2626).
+  color: var(--accent-foreground, #fff);
+  font-weight: 600;
+  font-size: var(--font-lg);
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.guideCtaSecondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: inherit;
+  font-size: var(--font-lg);
+  text-decoration: none;
+  transition: border-color 0.15s ease;
+
+  &:hover {
+    border-color: var(--accent, #4fb1ff);
+  }
+}
+
+.guideExample {
+  border-top: 1px solid var(--border, #2a2a2a);
+  padding-top: 0.75rem;
+
+  summary {
+    cursor: pointer;
+    font-size: var(--font-lg);
+    font-weight: 600;
+    user-select: none;
+    list-style: revert;
+  }
+
+  summary:hover {
+    color: var(--accent, #4fb1ff);
+  }
+}
+
+.guideExampleCode {
+  margin: 0.75rem 0 0.5rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  background: var(--bg-card, rgba(0, 0, 0, 0.25));
+  border: 1px solid var(--border, #2a2a2a);
+  font-family: var(--mono, ui-monospace, monospace);
+  font-size: var(--font-sm);
+  line-height: 1.5;
+  overflow-x: auto;
+  max-height: 320px;
+
+  code {
+    background: none;
+    padding: 0;
+    color: var(--text, inherit);
+  }
+}
+
+.guideExampleNote {
+  margin: 0.5rem 0 0;
+  font-size: var(--font-sm);
+  color: var(--text-dim, #888);
+  line-height: 1.5;
+
+  code {
+    font-family: var(--mono, ui-monospace, monospace);
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: 3px;
+    background: var(--surface-3, rgba(255, 255, 255, 0.06));
+  }
+}

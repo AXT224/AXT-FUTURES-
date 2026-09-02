@@ -1,0 +1,65 @@
+// Full-viewport drop-zone overlay. Shown while a file is being dragged
+// over the dashboard. Pointer-events: none so clicks never intercept
+// after the drop resolves.
+
+@use '../../theme/typography' as typo;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  // Sits one layer above every dialog so a file drag is reachable even
+  // when a critical modal (Verdict, LoadPreview) is open.
+  z-index: var(--z-overlay);
+  background: rgba(10, 8, 6, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  animation: fadeIn 120ms ease-out;
+}
+
+.card {
+  background: var(--bg-panel);
+  border: 2px dashed var(--accent, var(--amber));
+  border-radius: 12px;
+  padding: 28px 40px;
+  max-width: 360px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.6);
+  font-family: var(--sans);
+  color: var(--text-1);
+}
+
+.icon {
+  font-size: 32px;
+  line-height: 1;
+  margin-bottom: 10px;
+  color: var(--accent, var(--amber));
+}
+
+// "Drop to load" — sentence case.
+.heading {
+  @include typo.panel-title;
+  margin: 0 0 4px 0;
+  color: var(--text-1);
+  text-transform: none;
+  letter-spacing: 0.4px;
+}
+
+.sub {
+  font-size: var(--font-sm);
+  color: var(--text-3);
+  margin: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay { animation: none; }
+}

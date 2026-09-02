@@ -1,0 +1,246 @@
+@use '../../theme/typography' as typo;
+
+// "↳ Fork at Turn N" — sentence case button text.
+.forkButton {
+  @include typo.button-label;
+  background: transparent;
+  color: var(--teal);
+  border: 1px solid var(--teal-dim);
+  border-radius: var(--radius-sm);
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+
+  &:hover {
+    background: var(--teal-glow);
+    color: var(--amber);
+    border-color: var(--amber);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-modal-top);
+  padding: 24px;
+}
+
+.dialog {
+  background: var(--bg-panel);
+  border: 1px solid var(--border-hl);
+  border-radius: var(--radius-lg);
+  padding: 18px 22px 16px;
+  width: min(460px, calc(100vw - 48px));
+  max-height: calc(100vh - 48px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--raised-shadow);
+  font-family: var(--sans);
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  // "Fork at Turn N" — preserve casing.
+  h3 {
+    @include typo.panel-title;
+    margin: 0;
+    color: var(--amber);
+    text-transform: none;
+    letter-spacing: 0.4px;
+  }
+}
+
+.closeButton {
+  background: none;
+  border: 0;
+  color: var(--text-3);
+  font-size: var(--font-3xl);
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
+
+  &:hover {
+    color: var(--text-1);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label {
+    @include typo.field-label;
+    color: var(--text-3);
+  }
+  select,
+  input[type='number'] {
+    background: var(--bg-input);
+    color: var(--text-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-family: var(--mono);
+    font-size: var(--font-md);
+    outline: none;
+    transition: border-color 0.15s;
+
+    &:focus {
+      border-color: var(--amber);
+    }
+  }
+}
+
+.hint {
+  font-size: var(--font-xs);
+  color: var(--text-3);
+  font-family: var(--sans);
+}
+
+.warning {
+  color: var(--rust);
+  font-size: var(--font-sm);
+  font-family: var(--mono);
+  padding: 8px 10px;
+  background: var(--rust-glow);
+  border: 1px solid var(--rust-dim);
+  border-radius: var(--radius-sm);
+  margin: 0;
+}
+
+.advanced {
+  summary {
+    cursor: pointer;
+    color: var(--teal);
+    font-size: var(--font-sm);
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 4px 0;
+
+    &:hover {
+      color: var(--amber);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 2px;
+    }
+  }
+  textarea {
+    width: 100%;
+    background: var(--bg-input);
+    color: var(--text-1);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-family: var(--mono);
+    font-size: var(--font-sm);
+    margin-top: 6px;
+    resize: vertical;
+    min-height: 80px;
+    outline: none;
+
+    &:focus {
+      border-color: var(--amber);
+    }
+  }
+}
+
+.costEstimate {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 10px 12px;
+  background: var(--bg-card);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  font-family: var(--mono);
+  font-size: var(--font-sm);
+  color: var(--text-3);
+
+  strong {
+    color: var(--amber);
+    font-size: var(--font-lg);
+    font-weight: 600;
+  }
+}
+
+.costDetail {
+  color: var(--text-3);
+  font-size: var(--font-xs);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+
+  // "Cancel" / "Fork" — sentence case CTAs in the footer.
+  button {
+    @include typo.button-label;
+    font-size: var(--font-sm);
+    padding: 8px 16px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-1);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+
+    &:hover {
+      border-color: var(--border-hl);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--amber);
+      outline-offset: 2px;
+    }
+  }
+}
+
+.cancelButton {
+  &:hover {
+    color: var(--text-2);
+  }
+}
+
+.confirmButton {
+  background: var(--amber) !important;
+  color: var(--bg-deep) !important;
+  border-color: var(--amber) !important;
+
+  &:hover:not(:disabled) {
+    background: var(--accent-hover) !important;
+    border-color: var(--accent-hover) !important;
+  }
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

@@ -1,0 +1,64 @@
+@use '../../theme/typography' as typo;
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+// "All runs · 47 results" / "All runs · loading…" — sentence-case
+// header; preserve casing so the dynamic count + "loading…" don't shout.
+.head {
+  @include typo.section-label;
+  color: var(--text-3);
+  text-transform: none;
+  letter-spacing: 0.4px;
+}
+
+.grid,
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 0.75rem;
+}
+
+.cardSkeleton {
+  background: var(--bg-card);
+  border-radius: 8px;
+  height: 140px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 0.7; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cardSkeleton { animation: none; opacity: 0.5; }
+}
+
+.foot {
+  @include typo.body;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-3);
+  padding: 0.5rem 0;
+
+  button {
+    background: var(--bg-card);
+    border: 1px solid var(--glass-border);
+    border-radius: 4px;
+    color: var(--text-2);
+    padding: 0.3rem 0.7rem;
+    cursor: pointer;
+    font-family: var(--sans);
+
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+    &:hover:not(:disabled) {
+      border-color: var(--amber);
+      color: var(--amber);
+    }
+  }
+}

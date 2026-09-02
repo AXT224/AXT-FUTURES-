@@ -1,0 +1,108 @@
+// EventLogPanel styles migrated from inline styles (F4).
+
+@use '../../theme/typography' as typo;
+
+.panel {
+  background: var(--bg-deep);
+  color: var(--text-3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+// "Event Log (123 events)" — preserve casing on the dynamic count.
+.heading {
+  @include typo.card-title;
+  color: var(--text-1);
+  text-transform: none;
+  letter-spacing: 0.4px;
+}
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mono);
+  font-size: var(--font-xs);
+}
+
+.filterLabel { color: var(--text-3); }
+.filterValue {
+  color: var(--amber);
+  font-weight: 800;
+}
+
+.emptyState {
+  color: var(--text-3);
+  padding: 20px 0;
+}
+
+.event {
+  border-bottom: 1px solid var(--border);
+  padding: 2px 0;
+}
+
+.eventSummary {
+  cursor: pointer;
+  padding: 4px 0;
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+}
+
+.index {
+  // Was --text-3 at opacity 0.5 (effective 2.51:1) — failed WCAG AA.
+  // Initial fix used --text-4 (#6b5f50) but that resolves to ~3.1:1
+  // against --bg-deep, still under the 4.5:1 threshold. Drop the
+  // opacity entirely and keep --text-3 (#a89878 → ~6.5:1) so the
+  // index is subtle-but-readable.
+  color: var(--text-3);
+  min-width: 28px;
+  text-align: right;
+}
+
+.type {
+  font-weight: 700;
+  min-width: 120px;
+  // Per-event-type color is set via the `--log-type-color` CSS custom
+  // property on the parent <details>. Fallback stays `--text-3` for
+  // any type not in the TYPE_COLORS map.
+  color: var(--log-type-color, var(--text-3));
+}
+
+.leader {
+  color: var(--text-2);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.turn { color: var(--text-3); }
+.title { color: var(--text-2); }
+.department { color: var(--teal); }
+.outcome {
+  color: var(--amber);
+  font-weight: 700;
+}
+
+.dataBlock {
+  padding: 8px 12px 8px 44px;
+  margin: 0 0 4px;
+  background: var(--bg-card);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  overflow: auto;
+  max-height: 400px;
+  font-size: var(--font-xs);
+  line-height: 1.5;
+  color: var(--text-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}

@@ -1,0 +1,336 @@
+@use '../../theme/typography' as typo;
+
+// Surfaced above LoadedScenarioCTA when the textarea has enough seed
+// content to compile a new scenario. Shifts the user toward the bottom
+// Submit button instead of the orange loaded-scenario CTA, which would
+// silently discard their input.
+.pendingSeedNotice {
+  margin: 0 auto 12px;
+  max-width: 640px;
+  padding: 10px 14px;
+  background: var(--amber-glow, rgba(232, 180, 74, 0.12));
+  border: 1px solid var(--amber-dim, rgba(232, 180, 74, 0.4));
+  border-radius: var(--radius-sm);
+  color: var(--amber);
+  font-family: var(--sans);
+  font-size: var(--font-sm);
+  line-height: 1.5;
+  text-align: center;
+}
+
+// Visual separator between LoadedScenarioCTA and the paste/URL/PDF tab
+// strip. Renders as a horizontal rule with a centered text label.
+
+.dividerWrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 16px 0 8px;
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: var(--font-3xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.seedInput {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(100%, 640px);
+  min-width: 0;
+  padding: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  max-width: 640px;
+  margin: 0 auto;
+  font-family: var(--sans);
+}
+
+.templatePicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.templatePickerLabel {
+  @include typo.field-label;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+
+.templatePickerSelect {
+  flex: 1 1 auto;
+  min-width: 220px;
+  max-width: 100%;
+  background: var(--bg-input);
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-family: var(--sans);
+  font-size: var(--font-sm);
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: var(--amber);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 8px;
+}
+
+.tab {
+  @include typo.field-label;
+  background: transparent;
+  color: var(--text-3);
+  border: 1px solid transparent;
+  border-bottom: 2px solid transparent;
+  padding: 6px 14px;
+  cursor: pointer;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+
+  &:hover:not(:disabled) {
+    color: var(--text-1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+}
+
+.tabActive {
+  color: var(--amber);
+  border-bottom-color: var(--amber);
+}
+
+.textarea,
+.input {
+  width: 100%;
+  background: var(--bg-input);
+  color: var(--text-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-family: var(--mono);
+  font-size: var(--font-md);
+  outline: none;
+  resize: vertical;
+
+  &:focus {
+    border-color: var(--amber);
+  }
+}
+
+.urlRow {
+  display: flex;
+  gap: 8px;
+
+  input {
+    flex: 1;
+  }
+}
+
+// "Fetch" / "Generate + Run {N} {Actor|Actors} (~$X.XX)" — sentence case.
+.fetchButton,
+.runButton {
+  @include typo.button-label;
+  background: var(--amber);
+  color: var(--bg-deep);
+  border: 1px solid var(--amber);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--text-1);
+    outline-offset: 2px;
+  }
+}
+
+.runButton {
+  padding: 12px 18px;
+  font-size: var(--font-lg);
+  align-self: flex-start;
+}
+
+.dropZone {
+  padding: 36px 24px;
+  border: 2px dashed var(--border-hl);
+  border-radius: var(--radius-md);
+  text-align: center;
+  color: var(--text-3);
+  font-family: var(--mono);
+  font-size: var(--font-md);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+
+  &:hover {
+    border-color: var(--amber);
+    color: var(--text-1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 2px;
+  }
+}
+
+.hint {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  label {
+    font-size: var(--font-xs);
+    color: var(--text-3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: var(--mono);
+  }
+}
+
+.charCount {
+  font-size: var(--font-xs);
+  color: var(--text-3);
+  font-family: var(--mono);
+  align-self: flex-end;
+}
+
+.error {
+  color: var(--rust);
+  font-size: var(--font-sm);
+  padding: 8px 10px;
+  background: var(--rust-glow);
+  border: 1px solid var(--rust-dim);
+  border-radius: var(--radius-sm);
+  margin: 0;
+}
+
+.actorCountRow {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 8px 10px;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.actorCountLabel {
+  font-size: var(--font-sm);
+  color: var(--text-2);
+  font-family: var(--mono);
+  white-space: nowrap;
+  & strong { color: var(--amber); margin-left: 4px; }
+}
+
+.actorCountSlider {
+  // Custom track + thumb. The default browser rendering of a range
+  // input on a dark background is a near-invisible 1-2px hairline; only
+  // the thumb shows. `accent-color` alone fixes the thumb but leaves
+  // the track unreadable. Override both surfaces explicitly per
+  // vendor selector so the bar reads on dark themes.
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  margin: 8px 0;
+  background: transparent;
+  cursor: pointer;
+  accent-color: var(--amber);
+
+  &::-webkit-slider-runnable-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+  }
+
+  &::-moz-range-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    border: none;
+  }
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin-top: -5px;
+    background: var(--amber);
+    border: 2px solid var(--bg-deep);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+
+  &::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: var(--amber);
+    border: 2px solid var(--bg-deep);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 0 1px var(--border);
+  }
+
+  &:focus-visible {
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      box-shadow: 0 0 0 2px var(--amber);
+    }
+    &::-moz-range-thumb {
+      box-shadow: 0 0 0 2px var(--amber);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.actorCountPreview {
+  font-size: var(--font-xs);
+  color: var(--text-3);
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+

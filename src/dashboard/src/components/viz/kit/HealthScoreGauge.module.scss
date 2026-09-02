@@ -1,0 +1,34 @@
+@use '../../../theme/typography' as typo;
+
+.gauge {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: stretch;
+
+  &.sm { width: 80px; }
+  &.md { width: 120px; }
+  &.lg { width: 200px; }
+}
+
+.label {
+  @include typo.field-label;
+  color: var(--paracosm-text-muted, #888);
+}
+
+.value {
+  @include typo.body-strong;
+  color: var(--paracosm-text, #eee);
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.fill {
+  &[data-color="ok"]       { fill: var(--metric-ok, #4ca8a8); }
+  &[data-color="warn"]     { fill: var(--metric-warn, #e8b44a); }
+  &[data-color="critical"] { fill: var(--metric-critical, #e06530); }
+}

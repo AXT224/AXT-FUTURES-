@@ -1,0 +1,168 @@
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import type { ScenarioPackage } from '../engine/types.js';
+import {
+  buildDataDrivenHooksFromJson,
+  type JsonDataDrivenScenarioConfig,
+} from '../engine/data-driven-hooks/index.js';
+
+export type CustomScenarioSource = 'memory' | 'disk' | 'compiled' | 'builtin';
+
+export interface CustomScenarioEntry {
+  scenario: ScenarioPackage;
+  source: CustomScenarioSource;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function hasString(value: Record<string, unknown>, key: string): boolean {
+  return typeof value[key] === 'string' && value[key].length > 0;
+}
+
+function hasNumber(value: Record<string, unknown>, key: string): boolean {
+  return typeof value[key] === 'number' && Number.isFinite(value[key]);
+}
+
+export function isRunnableScenarioPackage(value: unknown): value is ScenarioPackage {
+  if (!isRecord(value)) return false;
+  if (!hasString(value, 'id') || !hasString(value, 'version')) return false;
+  if (value.engineArchetype !== 'closed_turn_based_settlement') return false;
+
+  const labels = value.labels;
+  const theme = value.theme;
+  const setup = value.setup;
+  const world = value.world;
+  const ui = value.ui;
+  const policies = value.policies;
+  const hooks = value.hooks;
+
+  if (!isRecord(labels)) return false;
+  if (!hasString(labels, 'name') || !hasString(labels, 'shortName') || !hasString(labels, 'populationNoun') || !hasString(labels, 'settlementNoun') || !hasString(labels, 'currency')) return false;
+
+  if (!isRecord(theme)) return false;
+  if (!hasString(theme, 'primaryColor') || !hasString(theme, 'accentColor') || !isRecord(theme.cssVariables)) return false;
+
+  if (!isRecord(setup)) return false;
+  if (!hasNumber(setup, 'defaultTurns') || !hasNumber(setup, 'defaultSeed') || !hasNumber(setup, 'defaultStartTime') || !hasNumber(setup, 'defaultPopulation') || !Array.isArray(setup.configurableSections)) return false;
+
+  if (!isRecord(world) || !isRecord(world.metrics) || !isRecord(world.capacities) || !isRecord(world.statuses) || !isRecord(world.politics) || !isRecord(world.environment)) return false;
+
+  if (!Array.isArray(value.departments) || !Array.isArray(value.metrics) || !Array.isArray(value.events) || !Array.isArray(value.effects) || !Array.isArray(value.presets)) return false;
+
+  if (!isRecord(ui)) return false;
+  if (!Array.isArray(ui.headerMetrics) || !Array.isArray(ui.tooltipFields) || !Array.isArray(ui.reportSections) || !isRecord(ui.departmentIcons) || !isRecord(ui.eventRenderers) || !Array.isArray(ui.setupSections)) return false;
+
+  if (!isRecord(policies)) return false;
+  if (!isRecord(policies.toolForging) || typeof policies.toolForging.enabled !== 'boolean') return false;
+  if (!isRecord(policies.liveSearch) || typeof policies.liveSearch.enabled !== 'boolean' || typeof policies.liveSearch.mode !== 'string') return false;
+  if (!isRecord(policies.bulletin) || typeof policies.bulletin.enabled !== 'boolean') return false;
+  if (!isRecord(policies.characterChat) || typeof policies.characterChat.enabled !== 'boolean') return false;
+  if (!isRecord(policies.sandbox) || !hasNumber(policies.sandbox, 'timeoutMs') || !hasNumber(policies.sandbox, 'memoryMB')) return false;
+
+  if (!isRecord(value.knowledge) || !isRecord(value.knowledge.topics) || !isRecord(value.knowledge.categoryMapping)) return false;
+  if (!isRecord(hooks)) return false;
+
+  return true;
+}
+
+/**
+ * Lift a "draft-shaped" JSON scenario (effects-as-object, no
+ * eventRenderers, no hooks, plus a `dataDrivenHooks` field) into a
+ * fully runnable {@link ScenarioPackage}. The draft shape is what
+ * scenarios/*.json files ship with — the loader now does what the
+ * mars/lunar TypeScript wrappers do (transform effects into the
+ * array shape, compute eventRenderers from the events list) plus
+ * compiles the JSON-DSL hooks into function values via the data-
+ * driven-hooks factory. Returns null when the JSON doesn't carry
+ * the data-driven shape — the caller falls back to the existing
+ * runnable-package path or skips the file.
+ */
+function liftDataDrivenDraft(parsed: unknown): ScenarioPackage | null {
+  if (!isRecord(parsed)) return null;
+  const ddh = parsed.dataDrivenHooks;
+  if (!isRecord(ddh)) return null;
+  const events = Array.isArray(parsed.events) ? parsed.events : [];
+  const effectsRaw = parsed.effects;
+  const ui = isRecord(parsed.ui) ? parsed.ui : {};
+  const liftedEffects = isRecord(effectsRaw)
+    ? [{
+        id: 'category_effects',
+        type: 'category_outcome',
+        label: 'Category Outcome Effects',
+        categoryDefaults: effectsRaw,
+      }]
+    : Array.isArray(effectsRaw) ? effectsRaw : [];
+  const liftedUi = {
+    ...ui,
+    eventRenderers: isRecord(ui.eventRenderers)
+      ? ui.eventRenderers
+      : Object.fromEntries(events
+          .filter((e: unknown): e is { id: string; icon?: string; color?: string } =>
+            isRecord(e) && typeof e.id === 'string')
+          .map((e) => [e.id, { icon: e.icon, color: e.color }])),
+  };
+  const lifted = {
+    ...parsed,
+    ui: liftedUi,
+    effects: liftedEffects,
+    hooks: buildDataDrivenHooksFromJson(ddh as unknown as JsonDataDrivenScenarioConfig),
+  };
+  // Strip the side-channel field so the runnable package matches the
+  // engine's expected shape — the dataDrivenHooks block has done its
+  // job at load time.
+  delete (lifted as Record<string, unknown>).dataDrivenHooks;
+  return lifted as unknown as ScenarioPackage;
+}
+
+export function loadDiskCustomScenarios(scenarioDir: string): Map<string, CustomScenarioEntry> {
+  const catalog = new Map<string, CustomScenarioEntry>();
+  if (!existsSync(scenarioDir)) return catalog;
+
+  for (const entry of readdirSync(scenarioDir, { withFileTypes: true })) {
+    if (!entry.isFile() || !entry.name.endsWith('.json')) continue;
+
+    const filePath = resolve(scenarioDir, entry.name);
+
+    try {
+      const parsed = JSON.parse(readFileSync(filePath, 'utf-8'));
+      // Two acceptance paths:
+      //   1. JSON already in fully runnable shape — register as-is.
+      //      This is what compile-from-seed produces, what the digital-
+      //      twin compiler emits, and what hand-curated drafts COULD be
+      //      after a manual TS wrapper. Rare in practice; here for
+      //      forward-compat.
+      //   2. JSON in draft shape with a `dataDrivenHooks` block —
+      //      lift via the data-driven-hooks factory. This is the
+      //      canonical path for scenarios that ship as data only
+      //      (atlas-lab, dual-superintelligence-council, future AI/
+      //      SaaS/governance scenarios). The loader does the same
+      //      effects+eventRenderers transformation the mars/lunar TS
+      //      wrappers do, plus compiles the JSON-DSL predicates.
+      if (isRunnableScenarioPackage(parsed)) {
+        catalog.set(parsed.id, { scenario: parsed, source: 'disk' });
+        continue;
+      }
+      const lifted = liftDataDrivenDraft(parsed);
+      if (lifted) {
+        catalog.set(lifted.id, { scenario: lifted, source: 'disk' });
+        continue;
+      }
+      // Neither path matched — skip silently. Hand-curated drafts
+      // without a `dataDrivenHooks` field stay drafts; they'd need
+      // either a TS wrapper or a dataDrivenHooks block to load.
+    } catch {
+      // Ignore unreadable or invalid custom scenario files at boot.
+    }
+  }
+
+  return catalog;
+}
+
+export function describeCustomScenarioSource(source: CustomScenarioSource): string {
+  if (source === 'builtin') return 'Built-in scenario';
+  if (source === 'disk') return 'Custom scenario (disk)';
+  if (source === 'compiled') return 'Custom compiled scenario';
+  return 'Custom scenario (memory)';
+}

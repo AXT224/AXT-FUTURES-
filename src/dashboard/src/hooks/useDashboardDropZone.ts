@@ -1,0 +1,187 @@
+/**
+ * Window-level drag-and-drop for the dashboard shell. Attaches dragenter
+ * / dragover / dragleave / drop listeners once at the app root and
+ * exposes a boolean `isDragging` that drives a full-viewport overlay.
+ *
+ * On drop: file list is validated via {@link validateDropFiles}. A
+ * valid `.json` is handed to the caller's `onFile` callback (typically
+ * `useLoadPreview.openFromFile`); invalid payloads route to `onError`.
+ *
+ * Uses a drag counter (incremented on dragenter, decremented on
+ * dragleave) rather than a plain boolean so the overlay doesn't
+ * flicker when the cursor crosses child elements while dragging.
+ *
+ * @module paracosm/cli/dashboard/hooks/useDashboardDropZone
+ */
+import { useEffect, useRef, useState } from 'react';
+import {
+  hasFilesDragPayload,
+  validateDropFiles,
+} from './useDashboardDropZone.helpers';
+
+export interface UseDashboardDropZoneOptions {
+  /** Called with the first valid `.json` file from the drop. */
+  onFile: (file: File) => void;
+  /**
+   * Called when the drop can't produce a valid file. `kind` matches
+   * {@link DropFilesResult.kind} when relevant; `multiFileTotal` is
+   * provided when the drop had >1 files and the first was valid
+   * (informational case).
+   */
+  onError?: (kind: 'unsupported', detail?: { multiFileTotal?: number }) => void;
+  /**
+   * Called when the drop had a valid first file plus extra files the
+   * caller may want to inform the user about. Separate from onError
+   * because the first file IS loaded — this is advisory.
+   */
+  onMultipleFiles?: (totalCount: number) => void;
+}
+
+export interface UseDashboardDropZoneApi {
+  /** `true` while a file drag is in progress over the viewport. */
+  isDragging: boolean;
+}
+
+export function useDashboardDropZone(
+  opts: UseDashboardDropZoneOptions,
+): UseDashboardDropZoneApi {
+  const [isDragging, setIsDragging] = useState(false);
+  // Ref holds the latest opts so the event handlers never close over a
+  // stale callback. Without this, swapping onFile between renders
+  // would require re-subscribing the window listeners.
+  const optsRef = useRef(opts);
+  optsRef.current = opts;
+
+  useEffect(() => {
+    let counter = 0;
+
+    /**
+     * `true` when the drag event's target is inside an element that
+     * declared its own local drop zone via the
+     * `data-paracosm-local-dropzone` attribute. The Quickstart PDF tab
+     * uses this so a PDF drop on its dashed-border zone is handled
+     * locally (extracted via pdf.js, not rejected with "Only .json
+     * simulation files supported"). The window listener short-circuits
+     * for these events so it never preventDefault()'s and never fires
+     * its onError toast.
+     *
+     * Hit-tests against the event target: if the closest ancestor
+     * carrying the data attribute exists, the local zone wins.
+     */
+    const isInsideLocalDropZone = (e: DragEvent): boolean => {
+      const target = e.target as Element | null;
+      if (!target || typeof target.closest !== 'function') return false;
+      return !!target.closest('[data-paracosm-local-dropzone]');
+    };
+
+    const onDragEnter = (e: DragEvent) => {
+      if (!hasFilesDragPayload(e.dataTransfer)) return;
+      if (isInsideLocalDropZone(e)) return;
+      counter += 1;
+      setIsDragging(true);
+    };
+
+    const onDragOver = (e: DragEvent) => {
+      // preventDefault is REQUIRED on every dragover, or browsers
+      // treat the page as non-droppable and never fire the drop event.
+      if (!hasFilesDragPayload(e.dataTransfer)) return;
+      if (isInsideLocalDropZone(e)) return;
+      e.preventDefault();
+    };
+
+    const onDragLeave = (e: DragEvent) => {
+      if (!hasFilesDragPayload(e.dataTransfer)) return;
+      if (isInsideLocalDropZone(e)) return;
+      counter = Math.max(0, counter - 1);
+      if (counter === 0) setIsDragging(false);
+    };
+
+    const onDrop = (e: DragEvent) => {
+      if (!hasFilesDragPayload(e.dataTransfer)) return;
+      // Local drop zones own PDF / future-format drops on the components
+      // that declare them. Yield without preventDefault so the local
+      // listener handles the drop.
+      if (isInsideLocalDropZone(e)) {
+        counter = 0;
+        setIsDragging(false);
+        return;
+      }
+      e.preventDefault();
+      counter = 0;
+      setIsDragging(false);
+      const files = Array.from(e.dataTransfer?.files ?? []);
+      const outcome = validateDropFiles(files);
+      const { onFile, onError, onMultipleFiles } = optsRef.current;
+      switch (outcome.kind) {
+        case 'ok':
+          onFile(outcome.file);
+          break;
+        case 'ok-with-extras':
+          onMultipleFiles?.(outcome.totalCount);
+          onFile(outcome.file);
+          break;
+        case 'unsupported':
+          onError?.('unsupported');
+          break;
+        case 'empty':
+          // no-op
+          break;
+      }
+    };
+
+    // Safety reset: the dragenter/dragleave counter pattern is fragile —
+    // browsers miss dragleave events when the cursor crosses the window
+    // edge, exits to a different app, or the page loses focus mid-drag.
+    // Without a fallback the counter stays > 0 forever and the overlay
+    // (z-index 100001, rgba black wash, backdrop-blur) stays painted
+    // over every tab, dimming the page and visually blocking every
+    // interaction even though pointer-events:none lets clicks through.
+    //
+    // Four independent resets:
+    //   1. `drop` safety pass — the main onDrop handler returns early
+    //      when payload isn't files or when a local zone owns the
+    //      drop, so this unconditional reset runs after it to guarantee
+    //      isDragging clears no matter which branch onDrop took.
+    //   2. `dragend` fires on the drag SOURCE when an in-page drag ends
+    //      for any reason (drop, ESC, cancel). Does NOT fire for
+    //      external OS-originated file drags (where the source is the
+    //      Finder/Explorer, not the window) — those are covered by the
+    //      drop safety pass above and the blur/pointerover fallbacks.
+    //   3. window `blur` — user switched apps mid-drag. Reset so the
+    //      overlay doesn't survive the focus loss.
+    //   4. `pointerover` outside any drag — if the cursor is moving
+    //      around the page without an active drag, there can't be one
+    //      in progress; reset to safe state.
+    const reset = () => {
+      counter = 0;
+      setIsDragging(false);
+    };
+    const onPointerOverIdle = (e: PointerEvent) => {
+      if (e.buttons === 0) reset();
+    };
+    window.addEventListener('dragenter', onDragEnter);
+    window.addEventListener('dragover', onDragOver);
+    window.addEventListener('dragleave', onDragLeave);
+    window.addEventListener('drop', onDrop);
+    // Unconditional reset runs AFTER onDrop. Both listeners fire on the
+    // same event; React's event ordering preserves attachment order so
+    // onDrop processes the file first, then this pass clears state
+    // even if onDrop took an early-return path that skipped the reset.
+    window.addEventListener('drop', reset);
+    window.addEventListener('dragend', reset);
+    window.addEventListener('blur', reset);
+    window.addEventListener('pointerover', onPointerOverIdle);
+    return () => {
+      window.removeEventListener('dragenter', onDragEnter);
+      window.removeEventListener('dragover', onDragOver);
+      window.removeEventListener('dragleave', onDragLeave);
+      window.removeEventListener('drop', onDrop);
+      window.removeEventListener('drop', reset);
+      window.removeEventListener('dragend', reset);
+      window.removeEventListener('blur', reset);
+      window.removeEventListener('pointerover', onPointerOverIdle);
+    };
+  }, []);
+
+  return { isDragging };
+}

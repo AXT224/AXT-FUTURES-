@@ -1,0 +1,57 @@
+@use '../../theme/typography' as typo;
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--glass-border);
+}
+
+.empty {
+  @include typo.caption;
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--text-3);
+  border: 1px dashed var(--glass-border);
+  border-radius: 8px;
+}
+
+.head {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.column h4 {
+  @include typo.card-title;
+  margin: 0;
+  color: var(--text-1);
+  text-transform: none; // proper-noun column header; preserve original casing
+  letter-spacing: normal;
+}
+
+.archetype {
+  @include typo.section-label;
+  color: var(--text-3);
+}
+
+.statusRow {
+  @include typo.caption;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.loading {
+  color: var(--text-3);
+}
+
+.error {
+  color: rgb(255, 130, 100);
+}

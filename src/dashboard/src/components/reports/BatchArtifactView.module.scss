@@ -1,0 +1,38 @@
+@use '../../theme/typography' as typo;
+
+.batchTrajectory {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.timepointGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.batchPoint {
+  padding: 1rem;
+  max-width: 480px;
+}
+
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: var(--paracosm-text-muted, #888);
+  font-style: italic;
+}
+
+// Renders {scenario.name} + "Batch trajectory (N timepoints)" /
+// "Batch point forecast" — dynamic prose; preserve casing.
+.header {
+  @include typo.card-title;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: var(--paracosm-text-muted, #888);
+  text-transform: none;
+  letter-spacing: 0.4px;
+}

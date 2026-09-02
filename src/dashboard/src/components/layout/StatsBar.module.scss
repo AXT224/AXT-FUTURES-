@@ -1,0 +1,110 @@
+// StatsBar styles — F4 batch 2 migration from inline style objects.
+// Per-leader color is fed in via `--actor-color-a` / `--actor-color-b`
+// CSS custom properties on the root so per-pill color references stay
+// in CSS rather than inline JS.
+
+@use '../../theme/typography' as typo;
+
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  padding: 2px 8px;
+  gap: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  // Match the Footer + body root background so the dashboard chrome
+  // disappears into the body. Top and bottom borders separate the
+  // bar from the leader columns above and the footer below.
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  font-family: var(--mono);
+  // POP/MORALE moved to the sticky compact ActorBar; what's left here
+  // is comparative-only (deaths/tools/reuse/cites). Drop visual weight
+  // so the bar reads as an at-a-glance comparator, not the primary
+  // information surface.
+  opacity: 0.85;
+}
+
+.crisis {
+  flex-shrink: 1;
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--rust);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.pill {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding-left: 6px;
+  border-left: 1px solid var(--border);
+}
+
+.label {
+  @include typo.micro;
+  color: var(--text-1);
+  // Two intentional deviations from `micro` for stats-pill legibility
+  // at 9px: heavier weight (800 vs 700) so the label reads against the
+  // colored value next to it, and tighter tracking (0.6px vs micro's
+  // 1.5px) so the pill stays narrow in a horizontally-packed bar.
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  margin-right: 1px;
+  opacity: 0.7;
+}
+
+.value {
+  font-size: var(--font-xs);
+  font-weight: 800;
+}
+
+.valueA {
+  @extend .value;
+  color: var(--actor-color-a);
+}
+
+.valueB {
+  @extend .value;
+  color: var(--actor-color-b);
+}
+
+.delta {
+  font-size: var(--font-3xs);
+}
+
+.deltaPositive {
+  @extend .delta;
+  color: var(--green);
+}
+
+.deltaNegative {
+  @extend .delta;
+  color: var(--rust);
+}
+
+.deltaNeutral {
+  @extend .delta;
+  color: var(--text-3);
+}
+
+.sep {
+  color: var(--text-3);
+  font-size: var(--font-3xs);
+}
+
+.causesChip {
+  font-size: var(--font-3xs);
+  color: var(--text-3);
+  font-style: italic;
+  margin-left: 4px;
+}

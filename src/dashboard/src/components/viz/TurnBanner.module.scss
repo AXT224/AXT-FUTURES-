@@ -1,0 +1,92 @@
+// Migrated from inline `style={{}}`.
+
+.banner {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 12px;
+  font-size: var(--font-xs);
+  font-family: var(--mono);
+  background: var(--bg-panel);
+  border-bottom: 1px solid var(--border);
+}
+
+.headline {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  color: var(--text-2);
+  flex-wrap: wrap;
+}
+
+.collapseBtn {
+  margin-left: auto;
+  padding: 2px 8px;
+  font-family: var(--mono);
+  font-size: var(--font-2xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: transparent;
+  color: var(--text-3);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--text-1);
+    border-color: var(--border-hl);
+  }
+}
+
+.turnLabel { color: var(--text-3); }
+
+.title {
+  font-weight: 700;
+  color: var(--text-1);
+}
+
+.categoryPill {
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: var(--font-3xs);
+  background: var(--bg-card);
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.lineA { color: var(--vis); }
+.lineB { color: var(--eng); }
+
+/* Cohort lines: rendered when there are 3+ actors. Each line gets
+ * its own actor name as the label (instead of "A"/"B") and uses the
+ * default body text color since per-actor color treatment lives in
+ * the cohort grid below; keeping the banner text uniform helps the
+ * eye scan event-level outcome differences without color confusion. */
+.line {
+  color: var(--text-2);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.lineLabel {
+  font-weight: 700;
+  color: var(--text-1);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.lineBody {
+  color: var(--text-2);
+  flex: 1;
+  min-width: 0;
+}
+
+.lineMore {
+  font-size: var(--font-3xs);
+  color: var(--text-3);
+  font-style: italic;
+  margin-top: 2px;
+}
